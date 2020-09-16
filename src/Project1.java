@@ -45,9 +45,13 @@ public class Project1 extends Synth{
     }
     String[] names = new String[Hammond.PRESETS.length];
     for(int i=0;i<Hammond.PRESETS.length;i++){
-      names[i] = String.valueOf(Hammond.PRESETS[0]);
+      names[i] = (String) Hammond.PRESETS[i][0];
+      //Multiple presets have the same name as others, Do not uncomment for fear
+      // of immense confusion!!!
+      //trim the leading numbers from the names
+      //names[i] = names[i].split(" ")[1];
     }
-    JSpinner presets = new JSpinner(new SpinnerListModel(names));
+    JComboBox<String> presets = new JComboBox<String>(names);
 
     hammondBox.add(presets);
 
