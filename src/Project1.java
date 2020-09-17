@@ -1,8 +1,6 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;
 
 public class Project1 extends Synth {
   public static void main(String[] args) {
@@ -27,14 +25,14 @@ public class Project1 extends Synth {
 
     // Build an Output
     Box hammondBox = new Box(BoxLayout.Y_AXIS);
-    hammondBox.setBorder(BorderFactory.createTitledBorder("Hammond"));
+    hammondBox.setBorder(BorderFactory.createTitledBorder("Organ"));
     outer.add(hammondBox);
 
     // build gui for Hammond
     Dial[] hDials = new Dial[9];
     for (int i = 1; i <= 9; i++) {
       Dial tDial = new Dial(i);
-      hammondBox.add(tDial.getLabelledDial(Integer.toString(i)));
+      hammondBox.add(tDial.getLabelledDial("Bar " + Integer.toString(i)));
       hDials[i - 1] = tDial;
     }
 
@@ -51,6 +49,8 @@ public class Project1 extends Synth {
       // trim the leading numbers from the names
       // names[i] = names[i].split(" ")[1];
     }
+    hammondBox.add(new JLabel("Presets"));
+
     JComboBox<String> presets = new JComboBox<String>(names);
     presets.addItemListener((ItemListener) new ItemListener() {
       @Override
