@@ -31,7 +31,8 @@ public class Hammond extends Osc {
   public Module[] amplitudeMods;
   // The tone wheels (the actual oscillators which generate the sound)
   public Sine[] tonewheels;
-  // These multiply the base frequency mod against constants which are fed into the actual frequencies of the tonewheels
+  // These multiply the base frequency mod against constants which are fed into
+  //   the actual frequencies of the tonewheels
   public Mul[] multipliers;
   // The options button
   public Options opt;
@@ -40,6 +41,8 @@ public class Hammond extends Osc {
 
   public Hammond() {
       // implement me
+      tonewheels = new Sine[9];
+      multipliers = new Mul[9];
       // I'll give you the presets options box
       String[] pre = new String[PRESETS.length];
       HashMap<String,int[]> tMap = new HashMap<>();
@@ -48,10 +51,12 @@ public class Hammond extends Osc {
         tMap.put((String)PRESETS[i][0],(int[])PRESETS[i][1]);
       }
       PRESETS_MAP = tMap;
+
       opt = new Options("Presets", pre, 0){
           public void update(int val)
               {
-              // This is a race condition, but I'll just update the dials, it won't be too bad
+              // This is a race condition, but I'll just update the dials,
+              //it won't be too bad
               for(int i = 0; i < NUM_TONEWHEELS; i++)
                   {
                   int[] vals = (int[])(PRESETS[val][1]);
@@ -63,6 +68,9 @@ public class Hammond extends Osc {
 
   public Hammond(Dial[] aModules){
     this();
+    if(aModules.length==0){
+      return;
+    }
     // Technically somebody could pass an array of fewer modules.
     // I guess I'll make the last dial extend through to the end.
     // If we are given too many, I guess we will just ignore the rest.
@@ -89,25 +97,36 @@ public class Hammond extends Osc {
 
   public Options getOptions() { return opt; }
 
-  public void setFrequencyMod(Module frequencyMod)
-      {
+  //we may need to do more in here with the sines not entirely sure*************
+  public void setFrequencyMod(Module frequencyMod) {
       // implement me
-      }
+      super.setFrequencyMod(frequencyMod);
+  }
 
-  public void setAmplitudeMod(int i, Module amp)
-      {
-      // implement me
-      }
+  //we may need to do more in here with the sines not entirely sure*************
+  public void setAmplitudeMod(int i, Module amp) {
+        if(i>=0||i<amplitudeMods.length){
+          amplitudeMods[i] = amp;
+        }
+  }
 
-  public Module getAmplitudeMod(int i) 
-    {
-      // implement me
-          return null;
-    }
+  //we may need to do more in here with the sines but probably not**************
+  public Module getAmplitudeMod(int i) {
+      if(i<0||i>=amplitudeMods.length){
+        return null;
+      }
+      return amplitudeMods[i];
+  }
 
   public double tick(long tickCount) {
     // implement me
-      return 0.0;
+    //tick all sine modules, and average them all out***************************
+    double tTone = 0.0;
+    for(int i=0;i<9;i++){
+
+    }
+    tTone /= 9.0;
+    return tTone;
   }
 
   public void setPreset(String selectedItem) {
