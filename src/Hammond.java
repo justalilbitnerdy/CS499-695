@@ -113,7 +113,6 @@ public class Hammond extends Osc {
 
   public void setFrequencyMod(Module frequencyMod)
       {
-      // implement me
       super.setFrequencyMod(frequencyMod);
           for (Mul multiplier : this.multipliers) {
               multiplier.setInput(frequencyMod);
@@ -122,19 +121,16 @@ public class Hammond extends Osc {
 
   public void setAmplitudeMod(int i, Module amp)
       {
-      // implement me
           this.amplitudeMods[i].setValue(amp.getValue());
       }
 
-  public Module getAmplitudeMod(int i) 
+  public Module getAmplitudeMod(int i)
     {
-      // implement me
           return this.amplitudeMods[i];
     }
 
   public double tick(long tickCount) {
-    // implement me
-    //tick all sine modules, and average them all out***************************
+    //tick all sine modules, and average them all out
       super.tick(tickCount);
     double tTone = 0.0;
     for(int i=0;i<9;i++){
