@@ -37,12 +37,23 @@ public class Hammond extends Osc {
   // The options button
   public Options opt;
 
+  public Amplifier[] amps;
+
   public Dial[] DrawBars;
 
   public Hammond() {
       // implement me
       tonewheels = new Sine[9];
       multipliers = new Mul[9];
+      amps = new Amplifier[9];
+      for (int i = 0; i < 9; i++) {
+          tonewheels[i] = new Sine();
+          multipliers[i] = new Mul();
+          amps[i] = new Amplifier();
+          multipliers[i].setMultiplier(new Constant(TONEBAR_FREQUENCIES[i]));
+          tonewheels[i].setFrequencyMod(multipliers[i]);
+          amps[i].setInput(tonewheels[i]);
+      }
       // I'll give you the presets options box
       String[] pre = new String[PRESETS.length];
       HashMap<String,int[]> tMap = new HashMap<>();
@@ -81,49 +92,56 @@ public class Hammond extends Osc {
       for (i= 0;i<aModules.length;i++) {
         DrawBars[i] = aModules[i];
         amplitudeMods[i] = aModules[aModules.length].getModule();
+        amps[i].setAmplitudeMod(amplitudeMods[i]);
       }
       for (;i<9;i++) {
         DrawBars[i] = aModules[aModules.length-1];
         amplitudeMods[i] = aModules[aModules.length-1].getModule();
+        amps[i].setAmplitudeMod(amplitudeMods[i]);
       }
     } else {
       DrawBars = aModules;
       for (int i= 0;i<aModules.length;i++) {
         DrawBars[i] = aModules[i];
         amplitudeMods[i] = aModules[i].getModule();
+        amps[i].setAmplitudeMod(amplitudeMods[i]);
       }
     }
   }
 
   public Options getOptions() { return opt; }
 
-  //we may need to do more in here with the sines not entirely sure*************
-  public void setFrequencyMod(Module frequencyMod) {
+  public void setFrequencyMod(Module frequencyMod)
+      {
       // implement me
       super.setFrequencyMod(frequencyMod);
-  }
-
-  //we may need to do more in here with the sines not entirely sure*************
-  public void setAmplitudeMod(int i, Module amp) {
-        if(i>=0||i<amplitudeMods.length){
-          amplitudeMods[i] = amp;
-        }
-  }
-
-  //we may need to do more in here with the sines but probably not**************
-  public Module getAmplitudeMod(int i) {
-      if(i<0||i>=amplitudeMods.length){
-        return null;
+          for (Mul multiplier : this.multipliers) {
+              multiplier.setInput(frequencyMod);
+          }
       }
-      return amplitudeMods[i];
-  }
+
+  public void setAmplitudeMod(int i, Module amp)
+      {
+      // implement me
+          this.amplitudeMods[i].setValue(amp.getValue());
+      }
+
+  public Module getAmplitudeMod(int i) 
+    {
+      // implement me
+          return this.amplitudeMods[i];
+    }
 
   public double tick(long tickCount) {
     // implement me
     //tick all sine modules, and average them all out***************************
+      super.tick(tickCount);
     double tTone = 0.0;
     for(int i=0;i<9;i++){
-
+        this.multipliers[i].doUpdate(tickCount);
+        this.tonewheels[i].doUpdate(tickCount);
+        this.amps[i].doUpdate(tickCount);
+        tTone += this.amps[i].getValue();
     }
     tTone /= 9.0;
     return tTone;
