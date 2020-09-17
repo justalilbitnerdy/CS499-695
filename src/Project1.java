@@ -24,12 +24,6 @@ public class Project1 extends Synth {
     JFrame frame = new JFrame();
     Box outer = new Box(BoxLayout.X_AXIS);
     frame.setContentPane(outer);
-    // layout for osciloscope output
-    Box outputBox = new Box(BoxLayout.Y_AXIS);
-    outputBox.setBorder(BorderFactory.createTitledBorder("Output"));
-    outer.add(outputBox);
-    Dial dial = new Dial(1.0);
-    outputBox.add(dial.getLabelledDial("Gain"));
 
     // Build an Output
     Box hammondBox = new Box(BoxLayout.Y_AXIS);
@@ -74,6 +68,13 @@ public class Project1 extends Synth {
     amp.setInput(ham);
     amp.setAmplitudeMod(gate);
 		modules.add(amp);
+
+    // layout for osciloscope output
+    Box outputBox = new Box(BoxLayout.Y_AXIS);
+    outputBox.setBorder(BorderFactory.createTitledBorder("Output"));
+    outer.add(outputBox);
+    Dial dial = new Dial(1.0);
+    outputBox.add(dial.getLabelledDial("Gain"));
 
     // Add a Gain amplifier
 		Amplifier gain = new Amplifier();
