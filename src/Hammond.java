@@ -1,5 +1,10 @@
+
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
 import java.util.HashMap;
 
+import javax.swing.*;
 /**
  * Hammond Organ Module
  *
@@ -41,72 +46,52 @@ public class Hammond extends Osc {
 
   public Dial[] DrawBars;
 
+  private Box GUI;
+
   public Hammond() {
-      // implement me
-      tonewheels = new Sine[9];
-      multipliers = new Mul[9];
-      amps = new Amplifier[9];
-      for (int i = 0; i < 9; i++) {
-          tonewheels[i] = new Sine();
-          multipliers[i] = new Mul();
-          amps[i] = new Amplifier();
-          multipliers[i].setMultiplier(new Constant(TONEBAR_FREQUENCIES[i]));
-          tonewheels[i].setFrequencyMod(multipliers[i]);
-          amps[i].setInput(tonewheels[i]);
-      }
-      // I'll give you the presets options box
-      String[] pre = new String[PRESETS.length];
-      HashMap<String,int[]> tMap = new HashMap<>();
-      for(int i = 0; i < pre.length; i++){
-        pre[i] = (String)PRESETS[i][0];
-        tMap.put((String)PRESETS[i][0],(int[])PRESETS[i][1]);
-      }
-      PRESETS_MAP = tMap;
 
-      opt = new Options("Presets", pre, 0){
-          public void update(int val)
-              {
-              // This is a race condition, but I'll just update the dials,
-              //it won't be too bad
-              for(int i = 0; i < NUM_TONEWHEELS; i++)
-                  {
-                  int[] vals = (int[])(PRESETS[val][1]);
-                  getAmplitudeMod(i).setValue(vals[i] / 8.0);
-                  }
-              }
-          };
-  }
+    //build GUI box with 9 dials
+    buildGUI();
 
-  public Hammond(Dial[] aModules){
-    this();
-    if(aModules.length==0){
-      return;
+    tonewheels = new Sine[9];
+    multipliers = new Mul[9];
+    amps = new Amplifier[9];
+    for (int i = 0; i < 9; i++) {
+        tonewheels[i] = new Sine();
+        multipliers[i] = new Mul();
+        amps[i] = new Amplifier();
+        multipliers[i].setMultiplier(new Constant(TONEBAR_FREQUENCIES[i]));
+        tonewheels[i].setFrequencyMod(multipliers[i]);
+        amps[i].setInput(tonewheels[i]);
     }
-    // Technically somebody could pass an array of fewer modules.
-    // I guess I'll make the last dial extend through to the end.
-    // If we are given too many, I guess we will just ignore the rest.
-    amplitudeMods = new Module[aModules.length];
-    if (aModules.length<9) {
-      DrawBars = new Dial[9];
-      int i = 0;
-      for (i= 0;i<aModules.length;i++) {
-        DrawBars[i] = aModules[i];
-        amplitudeMods[i] = aModules[aModules.length].getModule();
-        amps[i].setAmplitudeMod(amplitudeMods[i]);
-      }
-      for (;i<9;i++) {
-        DrawBars[i] = aModules[aModules.length-1];
-        amplitudeMods[i] = aModules[aModules.length-1].getModule();
-        amps[i].setAmplitudeMod(amplitudeMods[i]);
-      }
-    } else {
-      DrawBars = aModules;
-      for (int i= 0;i<aModules.length;i++) {
-        DrawBars[i] = aModules[i];
-        amplitudeMods[i] = aModules[i].getModule();
-        amps[i].setAmplitudeMod(amplitudeMods[i]);
-      }
+    // I'll give you the presets options box
+    String[] pre = new String[PRESETS.length];
+    HashMap<String,int[]> tMap = new HashMap<>();
+    for(int i = 0; i < pre.length; i++){
+      pre[i] = (String)PRESETS[i][0];
+      tMap.put((String)PRESETS[i][0],(int[])PRESETS[i][1]);
     }
+    PRESETS_MAP = tMap;
+
+    opt = new Options("Presets", pre, 0){
+        public void update(int val)
+            {
+            // This is a race condition, but I'll just update the dials,
+            //it won't be too bad
+            for(int i = 0; i < NUM_TONEWHEELS; i++)
+                {
+                int[] vals = (int[])(PRESETS[val][1]);
+                getAmplitudeMod(i).setValue(vals[i] / 8.0);
+                }
+            }
+        };
+    //Construct amplitudeMods
+    amplitudeMods = new Module[9];
+    for (int i= 0;i<DrawBars.length;i++) {
+      amplitudeMods[i] = DrawBars[i].getModule();
+      amps[i].setAmplitudeMod(amplitudeMods[i]);
+    }
+
   }
 
   public Options getOptions() { return opt; }
@@ -148,7 +133,40 @@ public class Hammond extends Osc {
     for(int i=0;i<9;i++){
       DrawBars[i].update(levels[i]/8.0);
     }
-	}
+  }
+
+  public Box getGUI(){
+    return GUI;
+  }
+
+  private void buildGUI(){
+    GUI = new Box(BoxLayout.Y_AXIS);
+    GUI.setBorder(BorderFactory.createTitledBorder("Organ"));
+    // build gui for Hammond
+    DrawBars = new Dial[9];
+    for (int i = 1; i <= 9; i++) {
+      DrawBars[i - 1] = new Dial(i);
+      GUI.add(DrawBars[i - 1].getLabelledDial("Bar " + Integer.toString(i)));
+    }
+
+    String[] names = new String[PRESETS.length];
+    for (int i = 0; i < PRESETS.length; i++) {
+      names[i] = (String) PRESETS[i][0];
+    }
+    GUI.add(new JLabel("Presets"));
+
+    JComboBox<String> presets = new JComboBox<String>(names);
+    presets.addItemListener((ItemListener) new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent itemEvent) {
+        @SuppressWarnings("unchecked")
+        JComboBox<String> tBox = (JComboBox<String>)itemEvent.getSource();
+        setPreset(tBox.getSelectedItem().toString());
+      }
+    });
+
+    GUI.add(presets);
+  }
 
   static final Object[][] PRESETS = new Object[][]
   {

@@ -4,8 +4,7 @@
 	is not consequential.
 */
 
-public class Add extends Module 
-{
+public class Add extends Module {
     private Module input = new Constant(1.0);
     private Module adder = new Constant(0.0);
 
@@ -15,8 +14,7 @@ public class Add extends Module
     public Module getInput() { return input; }
     public void setInput(Module input) { this.input = input; }
 
-    public double tick(long tickCount) 
-    {
-    return input.getValue() + adder.getValue();
+    public double tick(long tickCount) {
+        return input.getValue() + adder.getValue();
     }
 }
