@@ -2,7 +2,6 @@ import javax.swing.*;
 // Copyright 2018 by George Mason University
 // Licensed under the Apache 2.0 License
 
-
 /**
 	A TIME-based ADSR.  You can make this linear or pseudo-exponential (I'd start with linear).
 */

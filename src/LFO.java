@@ -84,7 +84,7 @@ public class LFO extends Osc {
       public void itemStateChanged(ItemEvent itemEvent) {
         @SuppressWarnings("unchecked")
         JComboBox<String> tBox = (JComboBox<String>)itemEvent.getSource();
-        switch(tBox.getSelectedItem().toString()){
+        switch(tBox.getSelectedItem().toString()) {
           case  "Sine":
             type = 0;
             break;
