@@ -29,9 +29,6 @@ public class Hammond extends Osc {
   // Number of amplitude modules
   public static final int NUM_TONEWHEELS = TONEBAR_FREQUENCIES.length;
 
-  //PRESETS, but faster
-  public final HashMap<String,int[]> PRESETS_MAP;
-
   // The amplitude modules -- these should be dial modules
   public Module[] amplitudeMods;
   // The tone wheels (the actual oscillators which generate the sound)
@@ -66,12 +63,6 @@ public class Hammond extends Osc {
     }
     // I'll give you the presets options box
     String[] pre = new String[PRESETS.length];
-    HashMap<String,int[]> tMap = new HashMap<>();
-    for(int i = 0; i < pre.length; i++){
-      pre[i] = (String)PRESETS[i][0];
-      tMap.put((String)PRESETS[i][0],(int[])PRESETS[i][1]);
-    }
-    PRESETS_MAP = tMap;
 
     opt = new Options("Presets", pre, 0){
         public void update(int val)
@@ -128,8 +119,8 @@ public class Hammond extends Osc {
     return tTone;
   }
 
-  public void setPreset(String selectedItem) {
-    int[] levels = PRESETS_MAP.get(selectedItem);
+  public void setPreset(int selectedItem) {
+    int[] levels = (int[]) PRESETS[selectedItem][1];
     for(int i=0;i<9;i++){
       DrawBars[i].update(levels[i]/8.0);
     }
@@ -153,18 +144,12 @@ public class Hammond extends Osc {
     for (int i = 0; i < PRESETS.length; i++) {
       names[i] = (String) PRESETS[i][0];
     }
-    GUI.add(new JLabel("Presets"));
 
-    JComboBox<String> presets = new JComboBox<String>(names);
-    presets.addItemListener((ItemListener) new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent itemEvent) {
-        @SuppressWarnings("unchecked")
-        JComboBox<String> tBox = (JComboBox<String>)itemEvent.getSource();
-        setPreset(tBox.getSelectedItem().toString());
+    Options presets = new Options("Presets", names, 0) {
+      public void update(int val) {
+          setPreset(val);
       }
-    });
-
+    };
     GUI.add(presets);
   }
 

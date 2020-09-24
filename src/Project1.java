@@ -24,34 +24,81 @@ public class Project1 extends Synth {
     //TODO*************************************************************************************************************
     // BEFORE THE ORGAN:
       // Create an Add which takes the MidiMod pitch as input
-
-      // Build a Hammond Organ with dials and options.  It now takes the *Add* as its frequency mod
+    Add add = new Add();
+    add.setInput(midimod);
+    modules.add(add);
+    // Build a Hammond Organ with dials and options.  It now takes the *Add* as its frequency mod
+    Hammond ham = new Hammond();
+    ham.setFrequencyMod(add);
+    modules.add(ham);
 
       // THE ENVELOPE:
-      ADSR adsr = new ADSR();
+    ADSR adsr = new ADSR();
+    modules.add(adsr);
       // Build an ADSR with dials at least.  It should default to sine waves
       // -- If you were really cool you'd add an options to change the wave type
       // -- If you were REALLY cool you'd add additional options for random LFOs or Sample and Hold Random LFOs.
-      // Build an amplifier AAA that takes the Hammond as input, modulated by the ADSR
+    // Build an amplifier AAA that takes the Hammond as input, modulated by the ADSR
+    Amplifier AAA = new Amplifier();
+    AAA.setInput(ham);
+    AAA.setAmplitudeMod(adsr);
+    modules.add(AAA);
     //TODO*************************************************************************************************************
-
-    // Build a Hammond Organ with dials and options
-    Hammond ham = new Hammond();
-    ham.setFrequencyMod(midimod);
-    modules.add(ham);
 
     //TODO Maybe doesn't go here **************************************************************************************
     // THE LESLIE (DOPPLER EFFECT):
-      LFO lfo = new LFO();
-      // Build an LFO.  Its rate should be a dial multiplied by 0.001 (use Mul) to slow it down
-      // First we'll make the Pitch effect:
-      // Make a Mul whose input is the LFO, multiplied by a "pitch" dial.
-      // Make another Mul whose input is the previous Mul multiplied by 0.001 so the pitch doesn't go nuts
-      // Set this final Mul as the adder() for the Add so it affects the organ's pitch
-      // Next we'll make the volume effect:
-      // Make yet another Mul, with the LFO as input, and an "Amplitude" dial as multiplier.
-      // Make another Add, with the Mul as the adder(), and that's it.  No input.  (thus it's 1.0 + Mul)
-      // Make an amplifier BBB with the first amplifier AAA as input and this new Add as modulation to flutter the overall volume.
+    // Build an LFO.
+    Box lfoGUI = new Box(BoxLayout.Y_AXIS);
+    lfoGUI.setBorder(BorderFactory.createTitledBorder("LFO"));
+    LFO lfo = new LFO();
+    modules.add(lfo);
+
+    //Its rate should be a dial multiplied by 0.001 (use Mul) to slow it down
+    Dial RateDial = new Dial(1.0);
+    lfoGUI.add(RateDial.getLabelledDial("Rate"));
+    Mul rateMul = new Mul();
+    modules.add(rateMul);
+    rateMul.setInput(RateDial.getModule());
+    rateMul.setMultiplier(new Constant(0.001));
+    lfo.Rate = rateMul;
+    modules.add(lfo);
+
+    // First we'll make the Pitch effect:
+    // Make a Mul whose input is the LFO, multiplied by a "pitch" dial.
+    Dial PitchDial = new Dial(1.0);
+    lfoGUI.add(PitchDial.getLabelledDial("Pitch"));
+    Mul pitchMul = new Mul();
+    modules.add(pitchMul);
+    pitchMul.setInput(lfo);
+    pitchMul.setMultiplier(PitchDial.getModule());
+
+    // Make another Mul whose input is the previous Mul multiplied by 0.001 so the pitch doesn't go nuts
+    Mul noNutsMul = new Mul();
+    modules.add(noNutsMul);
+    noNutsMul.setInput(pitchMul);
+    noNutsMul.setMultiplier(new Constant(0.001));
+    // Set this final Mul as the adder() for the Add so it affects the organ's pitch
+    add.setAdder(noNutsMul);
+    // Next we'll make the volume effect:
+    // Make yet another Mul, with the LFO as input, and an "Amplitude" dial as multiplier.
+    Dial AmplitudeDial = new Dial(1.0);
+    lfoGUI.add(AmplitudeDial.getLabelledDial("Amplitude"));
+    Mul ampMul = new Mul();
+    modules.add(ampMul);
+    ampMul.setInput(lfo);
+    ampMul.setMultiplier(AmplitudeDial.getModule());
+    // Make another Add, with the Mul as the adder(), and that's it.  No input.  (thus it's 1.0 + Mul)
+    Add tAdd = new Add();
+    modules.add(tAdd);
+    tAdd.setAdder(ampMul);
+    modules.add(tAdd);
+    // Make an amplifier BBB with the first amplifier AAA as input and this new Add as modulation to flutter the overall volume.
+    Amplifier BBB = new Amplifier();
+    BBB.setInput(AAA);
+    BBB.setAmplitudeMod(add);
+    modules.add(BBB);
+    Options presets = lfo.getOptions();
+    lfoGUI.add(presets);
     //TODO Maybe doesn't go here **************************************************************************************
 
     //TODO Build a Gate amplifier.  Its signal now gets fed *amplifier BBB***********************************************
@@ -59,6 +106,7 @@ public class Project1 extends Synth {
     amp.setInput(ham);
     amp.setAmplitudeMod(gate);
     modules.add(amp);
+    //TODO Build a Gate amplifier.  Its signal now gets fed *amplifier BBB***********************************************
 
     // layout for osciloscope output
     Box outputBox = new Box(BoxLayout.Y_AXIS);
@@ -80,9 +128,10 @@ public class Project1 extends Synth {
     omodule.setAmplitudeModule(gain);
     outputBox.add(oscope);
 
+    //setup gui
     Box adder = new Box(BoxLayout.Y_AXIS);
     adder.add(adsr.getGUI());
-    adder.add(lfo.getGUI());
+    adder.add(lfoGUI);
     outer.add(ham.getGUI());
     outer.add(adder);
     outer.add(outputBox);

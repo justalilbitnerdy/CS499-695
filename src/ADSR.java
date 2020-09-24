@@ -68,15 +68,15 @@ public class ADSR extends Module
         GUI.setBorder(BorderFactory.createTitledBorder("Env"));
         // build dials for Attack, Decay, Sustain and Release
         AttackDial = new Dial(1.0);
-        GUI.add(AttackDial.getLabelledDial("Attack"));
+        GUI.add(AttackDial.getLabelledDial("Attack Time"));
 
         DecayDial = new Dial(1.0);
-        GUI.add(DecayDial.getLabelledDial("Decay"));
+        GUI.add(DecayDial.getLabelledDial("Decay Time"));
 
         SustainDial = new Dial(1.0);
         GUI.add(SustainDial.getLabelledDial("Sustain"));
 
         ReleaseDial = new Dial(1.0);
-        GUI.add(ReleaseDial.getLabelledDial("Release"));
+        GUI.add(ReleaseDial.getLabelledDial("Release Time"));
       }
 }
