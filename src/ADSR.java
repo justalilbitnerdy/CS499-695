@@ -55,7 +55,7 @@ public class ADSR extends Module
     }
 
     public double tick(long tickCount) {
-        return 0.0;
+        return getGate();
 	// IMPLEMENT ME
     }
 

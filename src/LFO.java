@@ -43,6 +43,7 @@ public class LFO extends Osc {
 
   public double tick(long tickCount){
       // Implement Me
+      //currently only does ramp
     return super.tick(tickCount);
   }
 }
