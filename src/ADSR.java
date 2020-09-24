@@ -1,3 +1,4 @@
+import javax.sound.midi.SysexMessage;
 import javax.swing.*;
 // Copyright 2018 by George Mason University
 // Licensed under the Apache 2.0 License
@@ -29,7 +30,7 @@ public class ADSR extends Module
 
     // You should find these handy
     double starttime = 0;
-    double endtime = 0;
+    double endtime = Double.POSITIVE_INFINITY;
     double startlevel = 0;
     double endlevel = 0;
     private Box GUI;
@@ -68,6 +69,8 @@ public class ADSR extends Module
 
     public double tick(long tickCount) {
 	// IMPLEMENT ME
+        System.out.println("Start: " + Double.toString(startlevel));
+        System.out.println("Stage: " + Integer.toString(stage));
         if (stage == START && getGate() == 1) {
             // A note was pressed
             stage = ATTACK;
@@ -76,17 +79,20 @@ public class ADSR extends Module
             startlevel = 0.0;
             endlevel = getAttackLevel();
             endtime = stageTimes[ATTACK].getValue();
+            System.out.println("PRESSED!");
         } else if (START < stage && stage < RELEASE && getGate() == 0) {
             // A note was released
             stage = RELEASE;
             state = 0.0;
             startlevel = getValue();
             endlevel = 0.0;
+            endtime = getReleaseTime();
+            System.out.println("RELEASED!");
         }
 
         state += Config.INV_SAMPLING_RATE;
         while (state >= endtime) {
-            state -= stageTimes[stage].getValue();
+            state -= endtime;
             startlevel = getValue();
             stage = (stage + 1) % 5;
             endtime = stageTimes[stage].getValue();
@@ -94,9 +100,12 @@ public class ADSR extends Module
             if (stage == ATTACK) endlevel = getAttackLevel();
             else if (stage == DECAY || stage == SUSTAIN) endlevel = getSustainLevel();
             else endlevel = 0.0;
+            System.out.println("Stage is now " + Integer.toString(stage));
         }
-        gamma = state / stageTimes[stage].getValue();
+        gamma = state / endtime;
+        if (stage == START || stage == SUSTAIN) gamma = 0.0;
         setValue((1 - gamma) * startlevel + (gamma * endlevel));
+//        System.out.println(gamma);
         return state;
     }
 
