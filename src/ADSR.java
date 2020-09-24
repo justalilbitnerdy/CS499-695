@@ -13,7 +13,10 @@ public class ADSR extends Module
      static final int DECAY = 2;
      static final int SUSTAIN = 3;
      static final int RELEASE = 4;
-     int state = START;
+//     int state = START;
+    int stage = START;
+    double state = 0.0;
+    private double gamma;
 
      Module attackLevel = new Constant(1.0);
      Module attackTime = new Constant(0.01);
@@ -21,6 +24,8 @@ public class ADSR extends Module
      Module sustainLevel = new Constant(1.0);
      Module releaseTime = new Constant(0.01);
      Module gate = new Constant(0);
+
+     Module[] stageTimes = new Module[5]; // Conveniently indexed reference of endtimes
 
     // You should find these handy
     double starttime = 0;
@@ -49,14 +54,50 @@ public class ADSR extends Module
     public ADSR(){
         super();
         buildGUI();
-        attackTime = AttackDial.getModule();
-        decayTime = DecayDial.getModule();
-        releaseTime = ReleaseDial.getModule();
+        stageTimes[START] = new Constant(Double.POSITIVE_INFINITY);
+        setAttackTime(AttackDial.getModule());
+        stageTimes[ATTACK] = this.attackTime;
+        // Should set attack level here when we get a knob for it
+        setDecayTime(DecayDial.getModule());
+        stageTimes[DECAY] = this.decayTime;
+        setSustainLevel(SustainDial.getModule());
+        stageTimes[SUSTAIN] = new Constant(Double.POSITIVE_INFINITY);
+        setReleaseTime(ReleaseDial.getModule());
+        stageTimes[RELEASE] = this.releaseTime;
     }
 
     public double tick(long tickCount) {
-        return getGate();
 	// IMPLEMENT ME
+        if (stage == START && getGate() == 1) {
+            // A note was pressed
+            stage = ATTACK;
+            state = 0.0;
+            setValue(0.0);
+            startlevel = 0.0;
+            endlevel = getAttackLevel();
+            endtime = stageTimes[ATTACK].getValue();
+        } else if (START < stage && stage < RELEASE && getGate() == 0) {
+            // A note was released
+            stage = RELEASE;
+            state = 0.0;
+            startlevel = getValue();
+            endlevel = 0.0;
+        }
+
+        state += Config.INV_SAMPLING_RATE;
+        while (state >= endtime) {
+            state -= stageTimes[stage].getValue();
+            startlevel = getValue();
+            stage = (stage + 1) % 5;
+            endtime = stageTimes[stage].getValue();
+
+            if (stage == ATTACK) endlevel = getAttackLevel();
+            else if (stage == DECAY || stage == SUSTAIN) endlevel = getSustainLevel();
+            else endlevel = 0.0;
+        }
+        gamma = state / stageTimes[stage].getValue();
+        setValue((1 - gamma) * startlevel + (gamma * endlevel));
+        return state;
     }
 
     public Box getGUI(){
@@ -65,7 +106,7 @@ public class ADSR extends Module
 
       private void buildGUI(){
         GUI = new Box(BoxLayout.Y_AXIS);
-        GUI.setBorder(BorderFactory.createTitledBorder("Env"));
+        GUI.setBorder(BorderFactory.createTitledBorder("ADSR"));
         // build dials for Attack, Decay, Sustain and Release
         AttackDial = new Dial(1.0);
         GUI.add(AttackDial.getLabelledDial("Attack Time"));
