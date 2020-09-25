@@ -33,13 +33,17 @@ public class ADSR extends Module
     double endlevel = 0;
     private Box GUI;
     private Dial AttackDial;
+    private Dial AttackLevelDial;
     private Dial DecayDial;
     private Dial SustainDial;
     private Dial ReleaseDial;
 
     public double getAttackTime() { return attackTime.getValue(); }
     public void setAttackTime(Module attackTime) { this.attackTime = attackTime; }
-    public double getAttackLevel() { return attackLevel.getValue(); }
+    public double getAttackLevel() {
+        // Don't let the attack level be less than the sustain
+        return Math.max(attackLevel.getValue(), sustainLevel.getValue());
+    }
     public void setAttackLevel(Module attackLevel) { this.attackLevel = attackLevel; }
     public double getDecayTime() { return decayTime.getValue(); }
     public void setDecayTime(Module decayTime) { this.decayTime = decayTime; }
@@ -54,7 +58,7 @@ public class ADSR extends Module
         super();
         buildGUI();
         setAttackTime(AttackDial.getModule());
-        // Should set attack level here when we get a knob for it
+        setAttackLevel(AttackLevelDial.getModule());
         setDecayTime(DecayDial.getModule());
         setSustainLevel(SustainDial.getModule());
         setReleaseTime(ReleaseDial.getModule());
@@ -187,6 +191,9 @@ public double tick(long tickCount) {
       // build dials for Attack, Decay, Sustain and Release
       AttackDial = new Dial(1.0);
       GUI.add(AttackDial.getLabelledDial("Attack Time"));
+
+      AttackLevelDial = new Dial(1.0);
+      GUI.add(AttackLevelDial.getLabelledDial("Attack Level"));
 
       DecayDial = new Dial(1.0);
       GUI.add(DecayDial.getLabelledDial("Decay Time"));
