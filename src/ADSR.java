@@ -28,8 +28,8 @@ public class ADSR extends Module
 
     // You should find these handy
     double starttime = 0;
-    double endtime = 0;
-    double startlevel = Double.POSITIVE_INFINITY;
+    double endtime = Double.POSITIVE_INFINITY;;
+    double startlevel = 0;
     double endlevel = 0;
     private Box GUI;
     private Dial AttackDial;
@@ -60,14 +60,14 @@ public class ADSR extends Module
         setReleaseTime(ReleaseDial.getModule());
     }
 
-public double tick(long curTime) {
+public double tick(long tickCount) {
     //setup for next stage if required
     switch (stage){
       case START:
         // if I should transition to ATTACK
         if(getGate()>0){
           //   set the start time for the ATTACK period
-          starttime = curTime;
+          starttime = tickCount;
           //   set the end time for the ATTACK period
           endtime = starttime + WAIT_TIME*AttackDial.getState();
           //   set the start level for the ATTACK period
@@ -79,9 +79,9 @@ public double tick(long curTime) {
         }
         break;
       case ATTACK:
-        if(curTime>=endtime){
+        if(tickCount>=endtime){
           // if I should transition to DECAY
-          starttime = curTime;
+          starttime = tickCount;
           //   set the end time for the DECAY period
           endtime = starttime + WAIT_TIME*DecayDial.getState();
           //   set the start level for the DECAY period
@@ -93,13 +93,13 @@ public double tick(long curTime) {
         }
         //switch to release if required. Split this out since it is duplicated
         //a lot
-        switchToReleaseIfNeeded(curTime);
+        switchToReleaseIfNeeded(tickCount);
         break;
       case DECAY:
         // if I should transition to SUSTAIN
-        if(curTime>=endtime){
+        if(tickCount>=endtime){
           //   set the start time for the SUSTAIN period
-          starttime = curTime;
+          starttime = tickCount;
           //   set the end time for the SUSTAIN period
           endtime = Double.POSITIVE_INFINITY;
           //   set the start level for the SUSTAIN period
@@ -111,18 +111,18 @@ public double tick(long curTime) {
         }
         //switch to release if required. Split this out since it is duplicated
         //a lot
-        switchToReleaseIfNeeded(curTime);
+        switchToReleaseIfNeeded(tickCount);
         break;
       case SUSTAIN:
         //switch to release if required. Split this out since it is duplicated
         //a lot
-        switchToReleaseIfNeeded(curTime);
+        switchToReleaseIfNeeded(tickCount);
         break;
       case RELEASE:
         // if I should transition to START
-        if(curTime>=endtime){
+        if(tickCount>=endtime){
           //   set the start time for the START period
-          starttime = curTime;
+          starttime = tickCount;
           //   set the end time for the START period
           endtime = Double.POSITIVE_INFINITY;
           //   set the start level for the START period
@@ -137,7 +137,7 @@ public double tick(long curTime) {
         // if I should transition to ATTACK
         if(getGate()>0){
           //   set the start time for the ATTACK period
-          starttime = curTime;
+          starttime = tickCount;
           //   set the end time for the ATTACK period
           endtime = starttime + WAIT_TIME*AttackDial.getState();
           //   set the start level for the ATTACK period
@@ -160,13 +160,13 @@ public double tick(long curTime) {
     //      situations where you might divide by zero and handle
     //      those appropriately.  I'd always set the start level
     //      to be whatever level you're currently at.
-    return Utils.lerp(startlevel,endlevel,curTime,starttime,endtime);
+    return Utils.lerp(startlevel,endlevel,tickCount,starttime,endtime);
   }
 
-  private void switchToReleaseIfNeeded(double curTime){
+  private void switchToReleaseIfNeeded(double tickCount){
     if(getGate()<1){
       //   set the start time for the RELEASE period
-      starttime = curTime;
+      starttime = tickCount;
       //   set the end time for the RELEASE period
       endtime = starttime + WAIT_TIME*ReleaseDial.getState();
       //   set the start level for the RELEASE period
