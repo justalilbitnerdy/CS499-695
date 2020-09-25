@@ -17,7 +17,6 @@ public class ADSR extends Module
 //     int state = START;
     int stage = START;
     double state = 0.0;
-    private double gamma;
 
      Module attackLevel = new Constant(1.0);
      Module attackTime = new Constant(0.01);
@@ -25,8 +24,6 @@ public class ADSR extends Module
      Module sustainLevel = new Constant(1.0);
      Module releaseTime = new Constant(0.01);
      Module gate = new Constant(0);
-
-     Module[] stageTimes = new Module[5]; // Conveniently indexed reference of endtimes
 
     // You should find these handy
     double starttime = 0;
@@ -55,16 +52,11 @@ public class ADSR extends Module
     public ADSR(){
         super();
         buildGUI();
-        stageTimes[START] = new Constant(Double.POSITIVE_INFINITY);
         setAttackTime(AttackDial.getModule());
-        stageTimes[ATTACK] = this.attackTime;
         // Should set attack level here when we get a knob for it
         setDecayTime(DecayDial.getModule());
-        stageTimes[DECAY] = this.decayTime;
         setSustainLevel(SustainDial.getModule());
-        stageTimes[SUSTAIN] = new Constant(Double.POSITIVE_INFINITY);
         setReleaseTime(ReleaseDial.getModule());
-        stageTimes[RELEASE] = this.releaseTime;
     }
 
   public double tick(long curTime) {
@@ -98,7 +90,8 @@ public class ADSR extends Module
           //   transition to DECAY
           stage = DECAY;
         }
-        //switch to release if required. Split this out since it is duplicated a lot
+        //switch to release if required. Split this out since it is duplicated
+        //a lot
         switchToReleaseIfNeeded(curTime);
         break;
       case DECAY:
@@ -115,11 +108,13 @@ public class ADSR extends Module
           //   transition to SUSTAIN
           stage = SUSTAIN;
         }
-        //switch to release if required. Split this out since it is duplicated a lot
+        //switch to release if required. Split this out since it is duplicated
+        //a lot
         switchToReleaseIfNeeded(curTime);
         break;
       case SUSTAIN:
-        //switch to release if required. Split this out since it is duplicated a lot
+        //switch to release if required. Split this out since it is duplicated
+        //a lot
         switchToReleaseIfNeeded(curTime);
         break;
       case RELEASE:
@@ -136,8 +131,25 @@ public class ADSR extends Module
           //   transition to START
           stage = START;
         }
+        //Stole from start, since if you attack during release it should still
+        // increase instead of waiting till the end.
+        // if I should transition to ATTACK
+        if(getGate()>0){
+          //   set the start time for the ATTACK period
+          starttime = curTime;
+          //   set the end time for the ATTACK period
+          endtime = starttime + WAIT_TIME*AttackDial.getState();
+          //   set the start level for the ATTACK period
+          startlevel = getValue();
+          //   set the end level for the ATTACK period
+          endlevel = getAttackLevel();
+          //   transition to ATTACK
+          stage = ATTACK;
+        }
         break;
     }
+    // check for divide by zero, I don't think this will ever get hit... again
+    // It certainly got hit a lot during testing
     if(starttime >=endtime){
       return endlevel;
     }
