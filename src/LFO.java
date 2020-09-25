@@ -39,7 +39,6 @@ public class LFO extends Osc {
   public Options getOptions() {
     return new Options("Types", TYPES, 0) {
       public void update(int val) {
-          // this is a race condition but whatever
           setType(val);
       }
     };
