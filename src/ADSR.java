@@ -100,7 +100,7 @@ public class ADSR extends Module
           //   set the start time for the SUSTAIN period
           starttime = curTime;
           //   set the end time for the SUSTAIN period
-          endtime = starttime + WAIT_TIME*SustainDial.getState();
+          endtime = Double.POSITIVE_INFINITY;
           //   set the start level for the SUSTAIN period
           startlevel = getValue();
           //   set the end level for the SUSTAIN period

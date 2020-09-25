@@ -56,9 +56,9 @@ public class LFO extends Osc {
       case LFO_TYPE_SAW:
         return 1-ramp;
       case LFO_TYPE_SQUARE:
-        // C would let me do "return ramp>.5", thus confirming it's supremacy
-        //this square wave returns
-        return ramp>.5?1:0;
+        // I guess square waves are supposed to start at 1, no idea though.
+        // does it matter if we can't hear a phase shift?
+        return ramp>.5?0:1;
       case LFO_TYPE_TRIANGLE:
         return ramp<.5?ramp*2:-ramp*2+2;
       default:
