@@ -13,6 +13,7 @@ public class ADSR extends Module
      static final int DECAY = 2;
      static final int SUSTAIN = 3;
      static final int RELEASE = 4;
+     static final int WAIT_TIME = 2*(int)Config.SAMPLING_RATE;
 //     int state = START;
     int stage = START;
     double state = 0.0;
@@ -30,7 +31,7 @@ public class ADSR extends Module
     // You should find these handy
     double starttime = 0;
     double endtime = 0;
-    double startlevel = 0;
+    double startlevel = Double.POSITIVE_INFINITY;
     double endlevel = 0;
     private Box GUI;
     private Dial AttackDial;
@@ -66,58 +67,121 @@ public class ADSR extends Module
         stageTimes[RELEASE] = this.releaseTime;
     }
 
-    public double tick(long tickCount) {
-	// IMPLEMENT ME
-        if (stage == START && getGate() == 1) {
-            // A note was pressed
-            stage = ATTACK;
-            state = 0.0;
-            setValue(0.0);
-            startlevel = 0.0;
-            endlevel = getAttackLevel();
-            endtime = stageTimes[ATTACK].getValue();
-        } else if (START < stage && stage < RELEASE && getGate() == 0) {
-            // A note was released
-            stage = RELEASE;
-            state = 0.0;
-            startlevel = getValue();
-            endlevel = 0.0;
+  public double tick(long curTime) {
+    //setup for next stage if required
+    switch (stage){
+      case START:
+        // if I should transition to ATTACK
+        if(getGate()>0){
+          //   set the start time for the ATTACK period
+          starttime = curTime;
+          //   set the end time for the ATTACK period
+          endtime = starttime + WAIT_TIME*AttackDial.getState();
+          //   set the start level for the ATTACK period
+          startlevel = getValue();
+          //   set the end level for the ATTACK period
+          endlevel = getAttackLevel();
+          //   transition to ATTACK
+          stage = ATTACK;
         }
-
-        state += Config.INV_SAMPLING_RATE;
-        while (state >= endtime) {
-            state -= stageTimes[stage].getValue();
-            startlevel = getValue();
-            stage = (stage + 1) % 5;
-            endtime = stageTimes[stage].getValue();
-
-            if (stage == ATTACK) endlevel = getAttackLevel();
-            else if (stage == DECAY || stage == SUSTAIN) endlevel = getSustainLevel();
-            else endlevel = 0.0;
+        break;
+      case ATTACK:
+        if(curTime>=endtime){
+          // if I should transition to DECAY
+          starttime = curTime;
+          //   set the end time for the DECAY period
+          endtime = starttime + WAIT_TIME*DecayDial.getState();
+          //   set the start level for the DECAY period
+          startlevel = getValue();
+          //   set the end level for the DECAY period
+          endlevel = sustainLevel.getValue();
+          //   transition to DECAY
+          stage = DECAY;
         }
-        gamma = state / stageTimes[stage].getValue();
-        setValue((1 - gamma) * startlevel + (gamma * endlevel));
-        return state;
+        //switch to release if required. Split this out since it is duplicated a lot
+        switchToReleaseIfNeeded(curTime);
+        break;
+      case DECAY:
+        // if I should transition to SUSTAIN
+        if(curTime>=endtime){
+          //   set the start time for the SUSTAIN period
+          starttime = curTime;
+          //   set the end time for the SUSTAIN period
+          endtime = starttime + WAIT_TIME*SustainDial.getState();
+          //   set the start level for the SUSTAIN period
+          startlevel = getValue();
+          //   set the end level for the SUSTAIN period
+          endlevel = getSustainLevel();
+          //   transition to SUSTAIN
+          stage = SUSTAIN;
+        }
+        //switch to release if required. Split this out since it is duplicated a lot
+        switchToReleaseIfNeeded(curTime);
+        break;
+      case SUSTAIN:
+        //switch to release if required. Split this out since it is duplicated a lot
+        switchToReleaseIfNeeded(curTime);
+        break;
+      case RELEASE:
+        // if I should transition to START
+        if(curTime>=endtime){
+          //   set the start time for the START period
+          starttime = curTime;
+          //   set the end time for the START period
+          endtime = Double.POSITIVE_INFINITY;
+          //   set the start level for the START period
+          startlevel = 0;
+          //   set the end level for the START period
+          endlevel = 0;
+          //   transition to START
+          stage = START;
+        }
+        break;
     }
+    if(starttime >=endtime){
+      return endlevel;
+    }
+    // given the current start time, end time, start level, end level,
+    //      and current time, compute and return the current level.
+    //      This is just linear interpolation.  Consider
+    //      situations where you might divide by zero and handle
+    //      those appropriately.  I'd always set the start level
+    //      to be whatever level you're currently at.
+    return Utils.lerp(startlevel,endlevel,curTime,starttime,endtime);
+  }
 
+  private void switchToReleaseIfNeeded(double curTime){
+    if(getGate()<1){
+      //   set the start time for the RELEASE period
+      starttime = curTime;
+      //   set the end time for the RELEASE period
+      endtime = starttime + WAIT_TIME*ReleaseDial.getState();
+      //   set the start level for the RELEASE period
+      startlevel = getValue();
+      //   set the end level for the RELEASE period
+      endlevel = 0;
+      //   set the end level for the RELEASE period
+      stage = RELEASE;
+    }
+  }
     public Box getGUI(){
         return GUI;
       }
 
-      private void buildGUI(){
-        GUI = new Box(BoxLayout.Y_AXIS);
-        GUI.setBorder(BorderFactory.createTitledBorder("ADSR"));
-        // build dials for Attack, Decay, Sustain and Release
-        AttackDial = new Dial(1.0);
-        GUI.add(AttackDial.getLabelledDial("Attack Time"));
+    private void buildGUI(){
+      GUI = new Box(BoxLayout.Y_AXIS);
+      GUI.setBorder(BorderFactory.createTitledBorder("ADSR"));
+      // build dials for Attack, Decay, Sustain and Release
+      AttackDial = new Dial(1.0);
+      GUI.add(AttackDial.getLabelledDial("Attack Time"));
 
-        DecayDial = new Dial(1.0);
-        GUI.add(DecayDial.getLabelledDial("Decay Time"));
+      DecayDial = new Dial(1.0);
+      GUI.add(DecayDial.getLabelledDial("Decay Time"));
 
-        SustainDial = new Dial(1.0);
-        GUI.add(SustainDial.getLabelledDial("Sustain"));
+      SustainDial = new Dial(1.0);
+      GUI.add(SustainDial.getLabelledDial("Sustain"));
 
-        ReleaseDial = new Dial(1.0);
-        GUI.add(ReleaseDial.getLabelledDial("Release Time"));
-      }
+      ReleaseDial = new Dial(1.0);
+      GUI.add(ReleaseDial.getLabelledDial("Release Time"));
+    }
 }

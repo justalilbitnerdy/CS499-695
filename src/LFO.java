@@ -18,17 +18,21 @@ public class LFO extends Osc {
   public static final int LFO_TYPE_TRIANGLE = 4;
   int type = LFO_TYPE_SINE;
   Dial RateDial;
-  Module Rate;
   Dial PitchDial;
   Module Pitch;
   Dial AmplitudeDial;
   Module Amplitude;
+  private Sine sine;
+
+  public LFO(){
+    sine = new Sine();
+  }
 
   public int getType(){
     return type;
   }
 
-  public void setType(int type) {
+  public synchronized void setType(int type) {
       this.type = type;
   }
 
@@ -42,8 +46,23 @@ public class LFO extends Osc {
   }
 
   public double tick(long tickCount){
-      // Implement Me
-      //currently only does ramp
-    return super.tick(tickCount);
+    // Get new ramp value used in all but sine.
+    // Not a efficient here but more readable.
+    double ramp = super.tick(tickCount);
+    switch(type){
+      case LFO_TYPE_SINE:
+        //update sine, but only when our type is sine for efficiency.
+        return sine.tick(tickCount);
+      case LFO_TYPE_SAW:
+        return 1-ramp;
+      case LFO_TYPE_SQUARE:
+        // C would let me do "return ramp>.5", thus confirming it's supremacy
+        //this square wave returns
+        return ramp>.5?1:0;
+      case LFO_TYPE_TRIANGLE:
+        return ramp<.5?ramp*2:-ramp*2+2;
+      default:
+        return ramp;
+    }
   }
 }
