@@ -73,7 +73,7 @@ public double tick(long tickCount) {
           //   set the start time for the ATTACK period
           starttime = tickCount;
           //   set the end time for the ATTACK period
-          endtime = starttime + WAIT_TIME*AttackDial.getState();
+          endtime = starttime + WAIT_TIME * getAttackTime();
           //   set the start level for the ATTACK period
           startlevel = getValue();
           //   set the end level for the ATTACK period
@@ -87,7 +87,7 @@ public double tick(long tickCount) {
           // if I should transition to DECAY
           starttime = tickCount;
           //   set the end time for the DECAY period
-          endtime = starttime + WAIT_TIME*DecayDial.getState();
+          endtime = starttime + WAIT_TIME * getDecayTime();
           //   set the start level for the DECAY period
           startlevel = getValue();
           //   set the end level for the DECAY period
@@ -143,7 +143,7 @@ public double tick(long tickCount) {
           //   set the start time for the ATTACK period
           starttime = tickCount;
           //   set the end time for the ATTACK period
-          endtime = starttime + WAIT_TIME*AttackDial.getState();
+          endtime = starttime + WAIT_TIME * getAttackTime();
           //   set the start level for the ATTACK period
           startlevel = getValue();
           //   set the end level for the ATTACK period
@@ -172,7 +172,7 @@ public double tick(long tickCount) {
       //   set the start time for the RELEASE period
       starttime = tickCount;
       //   set the end time for the RELEASE period
-      endtime = starttime + WAIT_TIME*ReleaseDial.getState();
+      endtime = starttime + WAIT_TIME * getReleaseTime();
       //   set the start level for the RELEASE period
       startlevel = getValue();
       //   set the end level for the RELEASE period
