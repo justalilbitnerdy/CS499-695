@@ -6,23 +6,11 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Debug (Launch) - Current File",
-            "request": "launch",
-            "mainClass": "${file}"
-        },
-        {
-            "type": "java",
-            "name": "Debug (Launch)-Project0<CS499-695_fdb50d71>",
-            "request": "launch",
-            "mainClass": "Project0",
-            "projectName": "CS499-695_fdb50d71"
-        },
-        {
-            "type": "java",
-            "name": "Debug (Launch)-Project1<CS499-695_fdb50d71>",
+            "name": "Debug",
             "request": "launch",
             "mainClass": "Project1",
-            "projectName": "CS499-695_fdb50d71"
+            "projectName": "CS499-695_fdb50d71",
+            "args": "0 1"
         }
     ]
 }
