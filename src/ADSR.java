@@ -1,3 +1,4 @@
+import javax.sound.midi.SysexMessage;
 import javax.swing.*;
 // Copyright 2018 by George Mason University
 // Licensed under the Apache 2.0 License
@@ -59,7 +60,7 @@ public class ADSR extends Module
         setReleaseTime(ReleaseDial.getModule());
     }
 
-  public double tick(long curTime) {
+public double tick(long curTime) {
     //setup for next stage if required
     switch (stage){
       case START:
