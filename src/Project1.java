@@ -59,6 +59,7 @@ public class Project1 extends Synth {
     modules.add(rateMul);
     rateMul.setInput(RateDial.getModule());
     rateMul.setMultiplier(new Constant(0.001));
+    lfo.setFrequencyMod(rateMul);
 
     // First we'll make the Pitch effect:
     // Make a Mul whose input is the LFO, multiplied by a "pitch" dial.
