@@ -17,15 +17,16 @@ public class LFO extends Osc {
   public static final int LFO_TYPE_SQUARE = 3;
   public static final int LFO_TYPE_TRIANGLE = 4;
   int type = LFO_TYPE_SINE;
-  Dial RateDial;
-  Dial PitchDial;
-  Module Pitch;
-  Dial AmplitudeDial;
-  Module Amplitude;
-  private Sine sine;
+  private final Sine sine;
 
   public LFO(){
     sine = new Sine();
+  }
+
+  @Override
+  public void setFrequencyMod(Module frequencyMod) {
+    super.setFrequencyMod(frequencyMod);
+    this.sine.setFrequencyMod(frequencyMod);
   }
 
   public int getType(){
