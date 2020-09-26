@@ -1,6 +1,4 @@
 import javax.swing.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 public class Project1 extends Synth {
   public static void main(String[] args) {
@@ -21,7 +19,6 @@ public class Project1 extends Synth {
     Box outer = new Box(BoxLayout.X_AXIS);
     frame.setContentPane(outer);
 
-    //TODO*************************************************************************************************************
     // BEFORE THE ORGAN:
       // Create an Add which takes the MidiMod pitch as input
     Add add = new Add();
@@ -32,19 +29,17 @@ public class Project1 extends Synth {
     ham.setFrequencyMod(add);
     modules.add(ham);
 
-      // THE ENVELOPE:
+    // THE ENVELOPE:
+    // Build an ADSR with dials at least.  It should default to sine waves~
     ADSR adsr = new ADSR();
     modules.add(adsr);
     adsr.setGate(gate);
-      // Build an ADSR with dials at least.  It should default to sine waves
-      // -- If you were really cool you'd add an options to change the wave type
-      // -- If you were REALLY cool you'd add additional options for random LFOs or Sample and Hold Random LFOs.
     // Build an amplifier AAA that takes the Hammond as input, modulated by the ADSR
     Amplifier AAA = new Amplifier();
     AAA.setInput(ham);
     AAA.setAmplitudeMod(adsr);
     modules.add(AAA);
-    //TODO*************************************************************************************************************
+
     // THE LESLIE (DOPPLER EFFECT):
     // Build an LFO.
     Box lfoGUI = new Box(BoxLayout.Y_AXIS);
