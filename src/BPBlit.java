@@ -18,6 +18,7 @@ public class BPBlit extends Blit
     protected double bpblit(long tickCount)
         {
         // IMPLEMENT ME
+        return 0.0;
         }
 
     public double tick(long tickCount) 

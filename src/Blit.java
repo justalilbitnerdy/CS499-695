@@ -3,6 +3,7 @@ public class Blit extends Osc
     public double sincm(double x, double m)
         {
         /// IMPLEMENT ME
+        return 0.0;
         }
 
     public double tick(long tickCount)

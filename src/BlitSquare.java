@@ -6,6 +6,7 @@ public class BlitSquare extends BPBlit
     protected double blitsquare(long tickCount)
         {
         /// IMPLEMENT ME
+        return 0.0;
         }
 
 
@@ -15,7 +16,7 @@ public class BlitSquare extends BPBlit
             return 0;
         else
             {
-            if (Utils.valueToHz(getFrequencyMod().getValue() == 0)
+            if (Utils.valueToHz(getFrequencyMod().getValue()) == 0)
                 {
                 return getValue();
                 }       

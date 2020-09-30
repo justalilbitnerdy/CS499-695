@@ -6,6 +6,7 @@ public class BlitTriangle extends BlitSquare
     protected double blittriangle(long tickCount)
         {
         // IMPLEMENT ME
+        return 0.0;
         }
         
     public double tick(long tickCount) 
@@ -14,7 +15,7 @@ public class BlitTriangle extends BlitSquare
             return 0;
         else
             {
-            if (Utils.valueToHz(getFrequencyMod().getValue() == 0))
+            if (Utils.valueToHz(getFrequencyMod().getValue()) == 0)
                 {
                 return 0;
                 }

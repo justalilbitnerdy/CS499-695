@@ -6,10 +6,12 @@ public class BlitSaw extends Blit
 	public double blitsaw(long tickCount)
 		{
 		/// IMPLEMENT ME
+        return 0.0;
 		}
 		
     public double tick(long tickCount) 
         {
+            return 0.0;
         /// IMPLEMENT ME.  Note how the other implementations of tick worked
         }
     }
