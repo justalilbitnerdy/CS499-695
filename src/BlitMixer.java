@@ -3,6 +3,7 @@ import javax.swing.*;
 public class BlitMixer extends Mixer {
 
   private Box GUI;
+
   Dial BlitAmplitude;
   Dial BPBlitAmplitude;
   Dial SawAmplitude;
@@ -11,36 +12,64 @@ public class BlitMixer extends Mixer {
   Dial TriangleAmplitude;
   Dial TrianglePulseWidth;
 
-  BPBlit       BpBlit;
-  BlitSaw      Saw;
-  BlitSquare   Square;
-  BlitTriangle Triangle;
+  // I'm 90% sure that we don't need to hold references to these, but I'm
+  //  leaving them in for...... future use.. Yeah, let's go with that.
+  Blit         _Blit;
+  BPBlit       _BpBlit;
+  BlitSaw      _Saw;
+  BlitSquare   _Square;
+  BlitTriangle _Triangle;
 
-  public BlitMixer() {
-    super(4);
-
+  // I really wanted to make a setFrequencyMod function, but the fact that a
+  //  Mixer doesn't use a frequency, discouraged me.
+  //  Admittedly, this isn't really better though
+  public BlitMixer(Module frequencyMod) {
+    // big ol' hack, but Dang it I've spend a lot of time here, and I'm going to
+    // make it work!
+    super(0);
     // Build dials for the amplitude of each of the oscillators, plus
     //       the pulse width of the square and triangle
     // Put them in a box and put it in the window
     buildGUI();
     // Build the oscillators
-    BpBlit   = new BPBlit();
-    BpBlit.setAm
-    Saw      = new BlitSaw();
-    Square   = new BlitSquare();
-    Triangle = new BlitTriangle();
+    _Blit     = new Blit();
+    _Blit.setFrequencyMod(frequencyMod);
+
+    _BpBlit   = new BPBlit();
+    _BpBlit.setFrequencyMod(frequencyMod);
+
+    _Saw      = new BlitSaw();
+    _Saw.setFrequencyMod(frequencyMod);
+
+    _Square   = new BlitSquare();
+    _Square.setFrequencyMod(frequencyMod);
+    _Square.setPhaseMod(SquarePulseWidth.getModule());
+
+    _Triangle = new BlitTriangle();
+    _Triangle.setFrequencyMod(frequencyMod);
+    _Triangle.setPhaseMod(TrianglePulseWidth.getModule());
+    
+    //stolen from Mixer.java
+    this.inputs = new Module[]{ _Blit, _BpBlit, _Saw, _Square, _Triangle };
+    this.amplitudeMods = new Module[]{ BlitAmplitude.getModule(),
+                                       BPBlitAmplitude.getModule(),
+                                       SawAmplitude.getModule(),
+                                       SquareAmplitude.getModule(),
+                                       SquarePulseWidth.getModule(),
+                                       TriangleAmplitude.getModule(),
+                                       TrianglePulseWidth.getModule()};
   }
 
-  //tick through
   public double tick(long tickCount) {
-    double bp = BpBlit.tick();
-    double saw = Saw.tick();
-    double square = Square.tick();
-    double triangle Triangle.tick();
-    return 0.0;
+    return super.tick(tickCount);
+  }
+
+  public Module[] getModules(){
+    return inputs;
   }
 
 
+  //stole starting values from the demo
   public void buildGUI() {
     GUI = new Box(BoxLayout.Y_AXIS);
     GUI.setBorder(BorderFactory.createTitledBorder("Blits"));

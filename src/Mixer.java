@@ -4,7 +4,7 @@ public class Mixer extends Module
     {
     Module[] inputs;
     Module[] amplitudeMods;
-    
+
     public Mixer(int numInputs)
         {
         inputs = new Module[numInputs];
@@ -15,13 +15,12 @@ public class Mixer extends Module
         	amplitudeMods[i] = new Constant(0);
         	}
         }
-        
-    public Mixer(Module[] inputs, Module[] amplitudeMods)
-    	{
+
+    public Mixer(Module[] inputs, Module[] amplitudeMods) {
     	this.inputs = inputs;
     	this.amplitudeMods = amplitudeMods;
-    	}
-        
+    }
+
     public Module getInput(int val) { return inputs[val]; }
     public void setInput(int val, Module input) { inputs[val] = input; }
 

@@ -25,7 +25,11 @@ RUNNING THE PROVIDED CODE
 
 STRUCTURE
 
-	Various BlitFoo classes rely on the output of their superclasses.  They should not call super.tick(), but rather super.bpblit() or super.blit() or super.blitsquare() or whatnot.  super.tick() is called if you want the output of a given class as a final result.
+	Various BlitFoo classes rely on the output of their superclasses.
+	They should not call super.tick(), but rather super.bpblit() or
+			super.blit() or super.blitsquare() or whatnot.
+	super.tick() is called if you want the output of a given class as a final result.
 
-	I have provided you with a new class called Mixer.java which mixes together some N sources weighted by amplitudes.  You will find it useful.
+	I have provided you with a new class called Mixer.java which mixes together
+	some N sources weighted by amplitudes.  You will find it useful.
 
