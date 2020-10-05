@@ -23,7 +23,7 @@ public class BlitMixer extends Mixer {
   // I really wanted to make a setFrequencyMod function, but the fact that a
   //  Mixer doesn't use a frequency, discouraged me.
   //  Admittedly, this isn't really better though
-  public BlitMixer(Module frequencyMod) {
+  public BlitMixer() {
     // big ol' hack, but Dang it I've spend a lot of time here, and I'm going to
     // make it work!
     super(0);
@@ -33,31 +33,23 @@ public class BlitMixer extends Mixer {
     buildGUI();
     // Build the oscillators
     _Blit     = new Blit();
-    _Blit.setFrequencyMod(frequencyMod);
-
     _BpBlit   = new BPBlit();
-    _BpBlit.setFrequencyMod(frequencyMod);
-
     _Saw      = new BlitSaw();
-    _Saw.setFrequencyMod(frequencyMod);
-
     _Square   = new BlitSquare();
-    _Square.setFrequencyMod(frequencyMod);
     _Square.setPhaseMod(SquarePulseWidth.getModule());
 
     _Triangle = new BlitTriangle();
-    _Triangle.setFrequencyMod(frequencyMod);
     _Triangle.setPhaseMod(TrianglePulseWidth.getModule());
-    
+
     //stolen from Mixer.java
-    this.inputs = new Module[]{ _Blit, _BpBlit, _Saw, _Square, _Triangle };
-    this.amplitudeMods = new Module[]{ BlitAmplitude.getModule(),
-                                       BPBlitAmplitude.getModule(),
-                                       SawAmplitude.getModule(),
-                                       SquareAmplitude.getModule(),
-                                       SquarePulseWidth.getModule(),
-                                       TriangleAmplitude.getModule(),
-                                       TrianglePulseWidth.getModule()};
+    inputs = new Module[]{ _Blit, _BpBlit, _Saw, _Square, _Triangle };
+    amplitudeMods = new Module[]{ BlitAmplitude.getModule(),
+                                  BPBlitAmplitude.getModule(),
+                                  SawAmplitude.getModule(),
+                                  SquareAmplitude.getModule(),
+                                  SquarePulseWidth.getModule(),
+                                  TriangleAmplitude.getModule(),
+                                  TrianglePulseWidth.getModule()};
   }
 
   public double tick(long tickCount) {

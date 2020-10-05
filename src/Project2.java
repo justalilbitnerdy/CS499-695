@@ -22,10 +22,11 @@ public class Project2 extends Synth {
     frame.setContentPane(outer);
 
     // Build a mixer for the various oscillators
-    BlitMixer blitMixer = new BlitMixer(midimod);
+    BlitMixer blitMixer = new BlitMixer();
     //add modules inside blitMixer
     for(Module m:blitMixer.getModules()){
       modules.add(m);
+      ((Osc)m).setFrequencyMod(midimod);
     }
     modules.add(blitMixer);
 
