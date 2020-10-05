@@ -55,6 +55,8 @@ public class Project2 extends Synth {
 
     // Add an oscilloscope
     Oscilloscope oscope = new Oscilloscope();
+    //from that one lecture where he said to do this. To somebody else.
+    oscope.setDelay(1);
     Oscilloscope.OModule omodule = oscope.getModule();
     modules.add(omodule);
     omodule.setAmplitudeModule(gain);
