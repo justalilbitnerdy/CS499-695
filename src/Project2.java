@@ -18,12 +18,9 @@ public class Project2 extends Synth {
       JFrame frame = new JFrame();
       Box outer = new Box(BoxLayout.X_AXIS);
       frame.setContentPane(outer);
-      // Build the oscillators
-      // Build dials for the amplitude of each of the oscillators, plus
-      //       the pulse width of the square and triangle
-      // Put them in a box and put it in the window
+
       // Build a mixer for the various oscillators
-      
+      BlitMixer blitMixer = new BlitMixer();
       // Build an ADSR
       ADSR adsr = new ADSR();
       adsr.setGate(gate);
@@ -51,6 +48,7 @@ public class Project2 extends Synth {
       setOutput(omodule);
 
       //setup gui
+      outer.add(blitMixer.getGUI());
       outer.add(adsr.getGUI());
       outer.add(outputBox);
 
