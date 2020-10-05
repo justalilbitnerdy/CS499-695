@@ -191,17 +191,20 @@ public double tick(long tickCount) {
       // build dials for Attack, Decay, Sustain and Release
       AttackDial = new Dial(1.0);
       GUI.add(AttackDial.getLabelledDial("Attack Time"));
+      AttackDial.update(.1);
 
       AttackLevelDial = new Dial(1.0);
       GUI.add(AttackLevelDial.getLabelledDial("Attack Level"));
 
       DecayDial = new Dial(1.0);
       GUI.add(DecayDial.getLabelledDial("Decay Time"));
+      DecayDial.update(0);
 
       SustainDial = new Dial(1.0);
       GUI.add(SustainDial.getLabelledDial("Sustain"));
 
       ReleaseDial = new Dial(1.0);
       GUI.add(ReleaseDial.getLabelledDial("Release Time"));
+      ReleaseDial.update(.1);
     }
 }
