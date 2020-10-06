@@ -11,6 +11,10 @@ public class BlitMixer extends Mixer {
   Dial SquarePulseWidth;
   Dial TriangleAmplitude;
   Dial TrianglePulseWidth;
+  Dial WhiteNoiseAmplitude;
+  Dial DSFAmplitude;
+  Dial DSFbeta;
+  Dial DSFalpha;
 
   // I'm 90% sure that we don't need to hold references to these, but I'm
   //  leaving them in for...... future use.. Yeah, let's go with that.
@@ -19,6 +23,8 @@ public class BlitMixer extends Mixer {
   BlitSaw      _Saw;
   BlitSquare   _Square;
   BlitTriangle _Triangle;
+  WhiteNoise   _WhiteNoise;
+  DSF          _DSF;
 
   // I really wanted to make a setFrequencyMod function, but the fact that a
   //  Mixer doesn't use a frequency, discouraged me.
@@ -41,15 +47,26 @@ public class BlitMixer extends Mixer {
     _Triangle = new BlitTriangle();
     _Triangle.setPhaseMod(TrianglePulseWidth.getModule());
 
+    _WhiteNoise = new WhiteNoise();
+    _DSF        = new DSF(DSFbeta.getModule(),DSFalpha.getModule());
+
     //stolen from Mixer.java
-    inputs = new Module[]{ _Blit, _BpBlit, _Saw, _Square, _Triangle };
-    amplitudeMods = new Module[]{ BlitAmplitude.getModule(),
-                                  BPBlitAmplitude.getModule(),
-                                  SawAmplitude.getModule(),
-                                  SquareAmplitude.getModule(),
-                                  SquarePulseWidth.getModule(),
-                                  TriangleAmplitude.getModule(),
-                                  TrianglePulseWidth.getModule()};
+    inputs = new Module[7];
+    amplitudeMods = new Module[7];
+    inputs[0] = _Blit;
+    amplitudeMods[0] = BPBlitAmplitude.getModule();
+    inputs[1] = _BpBlit;
+    amplitudeMods[1] = SawAmplitude.getModule();
+    inputs[2] = _Saw;
+    amplitudeMods[2] = SquareAmplitude.getModule();
+    inputs[3] = _Square;
+    amplitudeMods[3] = SquareAmplitude.getModule();
+    inputs[4] = _Triangle;
+    amplitudeMods[4] = TriangleAmplitude.getModule();
+    inputs[5] = _WhiteNoise;
+    amplitudeMods[5] = WhiteNoiseAmplitude.getModule();
+    inputs[6] = _DSF;
+    amplitudeMods[6] = DSFAmplitude.getModule();
   }
 
   public double tick(long tickCount) {
@@ -93,6 +110,26 @@ public class BlitMixer extends Mixer {
     TrianglePulseWidth = new Dial(1.0);
     GUI.add(TrianglePulseWidth.getLabelledDial("Triangle Pulse Width"));
     TrianglePulseWidth.update(.5);
+
+    WhiteNoiseAmplitude = new Dial(1.0);
+    GUI.add(WhiteNoiseAmplitude.getLabelledDial("White Noise Amplitude"));
+    WhiteNoiseAmplitude.update(0);
+
+    Box DSFBox = new Box(BoxLayout.X_AXIS);
+    DSFBox.setBorder(BorderFactory.createTitledBorder("DSF"));
+    DSFAmplitude = new Dial(1.0);
+    DSFBox.add(DSFAmplitude.getLabelledDial("Amplitude  "));
+    DSFAmplitude.update(1);
+
+    DSFbeta = new Dial(1.0);
+    DSFBox.add(DSFbeta.getLabelledDial("beta"));
+    DSFbeta.update(0);
+
+    DSFalpha = new Dial(1.0);
+    DSFBox.add(DSFalpha.getLabelledDial("alpha"));
+    DSFalpha.update(0);
+
+    GUI.add(DSFBox);
   }
 
   public Box getGUI() {
