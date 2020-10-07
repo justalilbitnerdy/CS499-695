@@ -1,3 +1,5 @@
+import java.lang.Math;
+
 public class BlitTriangle extends BlitSquare 
     {
     // this might be useful
@@ -5,8 +7,10 @@ public class BlitTriangle extends BlitSquare
     
     protected double blittriangle(long tickCount)
         {
-        // IMPLEMENT ME
-            prev = 0.9 * prev + blitsquare(tickCount)/getP();
+            double f = Utils.valueToHz(getFrequencyMod().getValue());
+            double a = 1-.1*Math.min(1,f/1000);
+      
+            prev = a * prev + blitsquare(tickCount)/getP();
             return prev;
         }
         
@@ -21,7 +25,7 @@ public class BlitTriangle extends BlitSquare
                 return 0;
                 }
                         
-            return blittriangle(tickCount) * 14.0 + 0.5;
+            return blittriangle(tickCount) * 4.0 + 0.5;
             }
         }
     }

@@ -83,51 +83,40 @@ public class BlitMixer extends Mixer {
     GUI = new Box(BoxLayout.Y_AXIS);
     GUI.setBorder(BorderFactory.createTitledBorder("Blits"));
     // build dials for Attack, Decay, Sustain and Release
-    BlitAmplitude = new Dial(1.0);
+    BlitAmplitude = new Dial(0);
     GUI.add(BlitAmplitude.getLabelledDial("Blit Amplitude"));
-    BlitAmplitude.update(0);
 
-    BPBlitAmplitude = new Dial(1.0);
+    BPBlitAmplitude = new Dial(0);
     GUI.add(BPBlitAmplitude.getLabelledDial("BPBlit Amplitude"));
-    BPBlitAmplitude.update(0);
 
-    SawAmplitude = new Dial(1.0);
+    SawAmplitude = new Dial(1);
     GUI.add(SawAmplitude.getLabelledDial("Saw Amplitude"));
-    SawAmplitude.update(1);
 
-    SquareAmplitude = new Dial(1.0);
+    SquareAmplitude = new Dial(0);
     GUI.add(SquareAmplitude.getLabelledDial("Square Amplitude"));
-    SquareAmplitude.update(0);
 
-    SquarePulseWidth = new Dial(1.0);
+    SquarePulseWidth = new Dial(0.5);
     GUI.add(SquarePulseWidth.getLabelledDial("Square Pulse Width"));
-    SquarePulseWidth.update(.5);
 
-    TriangleAmplitude = new Dial(1.0);
+    TriangleAmplitude = new Dial(0);
     GUI.add(TriangleAmplitude.getLabelledDial("Triangle Amplitude"));
-    TriangleAmplitude.update(0);
 
-    TrianglePulseWidth = new Dial(1.0);
+    TrianglePulseWidth = new Dial(.5);
     GUI.add(TrianglePulseWidth.getLabelledDial("Triangle Pulse Width"));
-    TrianglePulseWidth.update(.5);
 
-    WhiteNoiseAmplitude = new Dial(1.0);
+    WhiteNoiseAmplitude = new Dial(0);
     GUI.add(WhiteNoiseAmplitude.getLabelledDial("White Noise Amplitude"));
-    WhiteNoiseAmplitude.update(0);
 
     Box DSFBox = new Box(BoxLayout.X_AXIS);
     DSFBox.setBorder(BorderFactory.createTitledBorder("DSF"));
-    DSFAmplitude = new Dial(1.0);
+    DSFAmplitude = new Dial(0);
     DSFBox.add(DSFAmplitude.getLabelledDial("Amplitude  "));
-    DSFAmplitude.update(1);
 
-    DSFbeta = new Dial(1.0);
+    DSFbeta = new Dial(0);
     DSFBox.add(DSFbeta.getLabelledDial("beta"));
-    DSFbeta.update(0);
 
-    DSFalpha = new Dial(1.0);
+    DSFalpha = new Dial(0);
     DSFBox.add(DSFalpha.getLabelledDial("alpha"));
-    DSFalpha.update(0);
 
     GUI.add(DSFBox);
   }
