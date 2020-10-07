@@ -16,6 +16,8 @@ public class BlitSquare extends BPBlit {
         return getValue();
       }
 
+      // I'm pretty sure that phase mod is the pulse width, if not, change how
+      //   Mixer does it
       double phase = getPhaseMod().getValue();
       return blitsquare(tickCount) * 0.75 + phase;
       }
