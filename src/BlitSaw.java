@@ -6,12 +6,17 @@ public class BlitSaw extends Blit
 	public double blitsaw(long tickCount)
 		{
 		/// IMPLEMENT ME
-        return 0.0;
+            prev = (1 - 1/getP()) * prev + blit(tickCount, 0.0);
+            return prev;
 		}
 		
     public double tick(long tickCount) 
         {
-            return 0.0;
-        /// IMPLEMENT ME.  Note how the other implementations of tick worked
+            /// IMPLEMENT ME.  Note how the other implementations of tick worked
+            if (tickCount <= 0) return 0.0;
+            else {
+                if (Utils.valueToHz(getFrequencyMod().getValue()) == 0) return 0.0;
+                return blitsaw(tickCount) - 0.5;
+            }
         }
     }

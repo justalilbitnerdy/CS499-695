@@ -6,7 +6,8 @@ public class BlitTriangle extends BlitSquare
     protected double blittriangle(long tickCount)
         {
         // IMPLEMENT ME
-        return 0.0;
+            prev = 0.9 * prev + blitsquare(tickCount)/getP();
+            return prev;
         }
         
     public double tick(long tickCount) 
@@ -20,7 +21,7 @@ public class BlitTriangle extends BlitSquare
                 return 0;
                 }
                         
-            return blittriangle(tickCount) * 4 + 1;
+            return blittriangle(tickCount) * 14.0 + 0.5;
             }
         }
     }

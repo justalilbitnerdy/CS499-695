@@ -4,7 +4,8 @@ public class BlitSquare extends BPBlit {
 
   protected double blitsquare(long tickCount) {
     /// IMPLEMENT ME
-    return 0.0;
+    prev = 0.999 * prev + bpblit(tickCount);
+    return prev;
   }
 
 
