@@ -54,11 +54,11 @@ public class BlitMixer extends Mixer {
     inputs = new Module[7];
     amplitudeMods = new Module[7];
     inputs[0] = _Blit;
-    amplitudeMods[0] = BPBlitAmplitude.getModule();
+    amplitudeMods[0] = BlitAmplitude.getModule();
     inputs[1] = _BpBlit;
-    amplitudeMods[1] = SawAmplitude.getModule();
+    amplitudeMods[1] = BPBlitAmplitude.getModule();
     inputs[2] = _Saw;
-    amplitudeMods[2] = SquareAmplitude.getModule();
+    amplitudeMods[2] = SawAmplitude.getModule();
     inputs[3] = _Square;
     amplitudeMods[3] = SquareAmplitude.getModule();
     inputs[4] = _Triangle;
