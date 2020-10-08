@@ -114,7 +114,7 @@ public class BlitMixer extends Mixer {
     DSFAmplitude = new Dial(0);
     DSFBox.add(DSFAmplitude.getLabelledDial("Amplitude  "));
 
-    DSFbeta = new IntegerDial(1,5);
+    DSFbeta = new IntegerDial(1,4);
     DSFBox.add(DSFbeta.getLabelledDial("beta"));
 
     DSFalpha = new Dial(0);

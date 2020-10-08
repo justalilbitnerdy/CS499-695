@@ -20,7 +20,7 @@ public class IntegerDial extends JPanel {
   public static final BasicStroke DIAL_THIN_STROKE = new BasicStroke(DIAL_STROKE_WIDTH / 2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL);
   public static final BasicStroke DIAL_THICK_STROKE = new BasicStroke(DIAL_STROKE_WIDTH, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL);
   public static final Color DIAL_DYNAMIC_COLOR = Color.RED;
-  public static final Font SMALL_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 10); 
+  public static final Font SMALL_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
 
   // The distance the mouse travels to go 0...1
   public static final int SCALE = 256;
@@ -30,20 +30,20 @@ public class IntegerDial extends JPanel {
 
   private double SLOTS;
 
-  // The state when the mouse was pressed 
+  // The state when the mouse was pressed
   private double startState;
-  // The mouse position when the mouse was pressed 
+  // The mouse position when the mouse was pressed
   private int startX;
   private int startY;
-      
+
   // Is the mouse pressed?  This is part of a mechanism for dealing with
   // a stupidity in Java: if you PRESS in a widget, it'll be told. But if
   // you then drag elsewhere and RELEASE, the widget is never told.
   private boolean mouseDown;
-      
+
   public Dimension getPreferredSize() { return new Dimension(LABELLED_DIAL_WIDTH, LABELLED_DIAL_WIDTH); }
   public Dimension getMinimumSize() { return new Dimension(LABELLED_DIAL_WIDTH, LABELLED_DIAL_WIDTH); }
-      
+
   private JLabel title = null;
   private JLabel data = null;
 
@@ -89,7 +89,6 @@ public class IntegerDial extends JPanel {
 
   private DialModule dialModule = new DialModule();
 
-      
   /*
     java bsh.Interpreter
     f = new JFrame();
@@ -109,7 +108,7 @@ public class IntegerDial extends JPanel {
         break;
       }
       if(val>=1){
-        newVal = 5;
+        newVal = SLOTS;
         break;
       }
     }
@@ -214,7 +213,7 @@ public class IntegerDial extends JPanel {
       }
 
   public IntegerDial(double initialValue,int slots) {
-      SLOTS = slots*1.0;
+      SLOTS = slots;
       if (initialValue < 0) initialValue = 0;
       if (initialValue > 1) initialValue = 1;
       dialModule.setValueNoRepaint(initialValue);
