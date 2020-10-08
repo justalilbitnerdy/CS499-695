@@ -101,18 +101,22 @@ public class IntegerDial extends JPanel {
 
   void update(double val) {
     double newVal = 0.0;
-    for(int i = 0;i<SLOTS;i++){
+    for(int i = 1;i<SLOTS+1;i++){
       double tmp = i*(1/SLOTS);
       if(val<=tmp){
         System.out.println(val + "<" + tmp + "i:" + i);
         newVal = i;
         break;
       }
+      if(val>=1){
+        newVal = 5;
+        break;
+      }
     }
-    setState(newVal+1);
+    setState(newVal);
 
     if (data != null) {
-        data.setText(" " + map(newVal+1));
+        data.setText(" " + (int)newVal);
     }
     repaint();
   }
@@ -194,7 +198,7 @@ public class IntegerDial extends JPanel {
       title = new JLabel(label);
       title.setFont(SMALL_FONT);
 
-      data = new JLabel(map(getState()));
+      data = new JLabel(Integer.toString((int)getState()));
       data.setFont(SMALL_FONT);
 
       panel.setLayout(new BorderLayout());
