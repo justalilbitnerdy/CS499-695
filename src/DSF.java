@@ -8,20 +8,23 @@ public class DSF extends Osc{
   private Module getA() { return this.a; }
   public void setA(Module a) { this.a = a; }
 
-  private double theta(long tickCount) {
-    return getFrequencyMod().getValue() * 2.0 * Math.PI * (double)tickCount;
+  private double theta(double timestep) {
+    return getFrequencyMod().getValue() * 2.0 * Math.PI * timestep;
   }
 
-  private double beta(long tickCount) {
-    return theta(tickCount) * getFBetaMultiplier().getValue();
+  private double beta(double timestep) {
+    return theta(timestep) * getFBetaMultiplier().getValue();
   }
 
   public double tick(long tickCount) {
-    super.tick(tickCount);
+    double freq = Utils.valueToHz(getFrequencyMod().getValue());
+    if(freq < 0.001) freq = 0.001;
+    double timestep = super.tick(tickCount) * Config.SAMPLING_RATE / freq;
+
     double n = Config.NYQUIST_LIMIT;
     double a_val = getA().getValue();
-    double theta = theta(tickCount);
-    double beta = beta(tickCount);
+    double theta = theta(timestep);
+    double beta = beta(timestep);
     return (
             (Math.sin(theta) - a_val*Math.sin(tickCount - beta) - Utils.fastpow(a_val, n+1)*(
                     Math.sin(theta + n*beta + beta) - a_val*Math.sin(theta + n*beta)
