@@ -20,11 +20,13 @@ public class DSF extends Osc{
     super.tick(tickCount);
     double n = Config.NYQUIST_LIMIT;
     double a_val = getA().getValue();
+    double theta = theta(tickCount);
+    double beta = beta(tickCount);
     return (
-            (Math.sin(theta(tickCount)) - a_val*Math.sin(tickCount - beta(tickCount)) - Utils.fastpow(a_val, n+1)*(
-                    Math.sin(theta(tickCount) + n*beta(tickCount) + beta(tickCount)) - a_val*Math.sin(theta(tickCount) + n*beta(tickCount))
+            (Math.sin(theta) - a_val*Math.sin(tickCount - beta) - Utils.fastpow(a_val, n+1)*(
+                    Math.sin(theta + n*beta + beta) - a_val*Math.sin(theta + n*beta)
                     )
-            ) / (1 + a_val * a_val - 2 * a_val * Math.cos(beta(tickCount)))
+            ) / (1 + a_val * a_val - 2 * a_val * Math.cos(beta))
     );
   }
 
