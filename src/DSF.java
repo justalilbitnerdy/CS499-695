@@ -30,7 +30,7 @@ public class DSF extends Osc{
                     Math.sin(theta + n*beta + beta) - a_val*Math.sin(theta + n*beta)
                     )
             ) / (1 + a_val * a_val - 2 * a_val * Math.cos(beta))
-    );
+    ) + 0.5;
   }
 
 }
