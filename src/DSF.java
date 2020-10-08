@@ -21,9 +21,9 @@ public class DSF extends Osc{
     if(freq < 0.001) freq = 0.001;
     double timestep = super.tick(tickCount) * Config.SAMPLING_RATE / freq;
 
-    double n = Config.NYQUIST_LIMIT / freq - 1;
-
+    double n = Config.NYQUIST_LIMIT / freq;
     double a_val = getA().getValue();
+    if (a_val > 0 && getFBetaMultiplier().getValue() > 0) n = n / getFBetaMultiplier().getValue();
     double theta = theta(timestep);
     double beta = beta(timestep);
     return (
