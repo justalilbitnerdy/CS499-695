@@ -5,14 +5,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.util.concurrent.locks.*;
 
-
-/**
-	A special module which presents itself as a GUI dial widget.  Changing the dial with your 
-	mouse will change the output of the underlying Module.  You create the Dial first,
-	then call getModule() to extract the module that it will control. 
-*/
-
-
+// I know I should do inherritence, but Too many private fields
 public class IntegerDial extends JPanel {
   public static final int LABELLED_DIAL_WIDTH = 20;
   public static final float DIAL_STROKE_WIDTH = 4.0f;
@@ -63,13 +56,12 @@ public class IntegerDial extends JPanel {
               lock.unlock();
               }
           }
-              
-      public void setValue(double value) 
-          {
+
+      public void setValue(double value) {
           setValueNoRepaint(value);
           repaint();
           }
-              
+
       public double getValue()
           {
           lock.lock();
@@ -89,21 +81,11 @@ public class IntegerDial extends JPanel {
 
   private DialModule dialModule = new DialModule();
 
-  /*
-    java bsh.Interpreter
-    f = new JFrame();
-    d = new Dial();
-    g = d.getLabelledDial("Hello World");
-    f.add(g);
-    f.show();
-  */
-
   void update(double val) {
     double newVal = 0.0;
     for(int i = 1;i<SLOTS+1;i++){
       double tmp = i*(1/SLOTS);
       if(val<=tmp){
-        System.out.println(val + "<" + tmp + "i:" + i);
         newVal = i;
         break;
       }
@@ -159,7 +141,6 @@ public class IntegerDial extends JPanel {
         return new Rectangle(x, y, w, h);
         }
   }
-
 
   void mouseReleased(MouseEvent e)
       {
