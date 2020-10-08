@@ -13,7 +13,7 @@ public class BlitMixer extends Mixer {
   Dial TrianglePulseWidth;
   Dial WhiteNoiseAmplitude;
   Dial DSFAmplitude;
-  Dial DSFbeta;
+  IntegerDial DSFbeta;
   Dial DSFalpha;
 
   // I'm 90% sure that we don't need to hold references to these, but I'm
@@ -114,7 +114,7 @@ public class BlitMixer extends Mixer {
     DSFAmplitude = new Dial(0);
     DSFBox.add(DSFAmplitude.getLabelledDial("Amplitude  "));
 
-    DSFbeta = new Dial(0);
+    DSFbeta = new IntegerDial(1,5);
     DSFBox.add(DSFbeta.getLabelledDial("beta"));
 
     DSFalpha = new Dial(0);
