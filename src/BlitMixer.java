@@ -48,7 +48,9 @@ public class BlitMixer extends Mixer {
     _Triangle.setPhaseMod(TrianglePulseWidth.getModule());
 
     _WhiteNoise = new WhiteNoise();
-    _DSF        = new DSF(DSFbeta.getModule(),DSFalpha.getModule());
+    _DSF        = new DSF();
+    _DSF.setA(DSFalpha.getModule());
+    _DSF.setFBetaMultiplier(DSFbeta.getModule());
 
     //stolen from Mixer.java
     inputs = new Module[7];

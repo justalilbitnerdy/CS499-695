@@ -1,6 +1,4 @@
-import java.lang.Math;
-
-public class BlitTriangle extends BlitSquare 
+public class BlitTriangle extends BlitSquare
     {
     // this might be useful
     double prev = 0;
@@ -9,7 +7,7 @@ public class BlitTriangle extends BlitSquare
         {
             double f = Utils.valueToHz(getFrequencyMod().getValue());
             double a = 1-.1*Math.min(1,f/1000);
-      
+
             prev = a * prev + blitsquare(tickCount)/getP();
             return prev;
         }
