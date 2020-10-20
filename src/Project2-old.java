@@ -39,6 +39,7 @@ public class Project2 extends Synth {
     // Feed the Mul as the cutoff for a LOW PASS FILTER (also feed in the resonance)
     /// END NEW IN PROJECT 2.5
 
+
     // Build an ADSR for the VCA
     ADSR adsr = new ADSR();
     adsr.setGate(gate);
