@@ -6,6 +6,8 @@ public class Filter extends Module {
   double[] x;
   double[] y;
   double x0;
+  //I believe the way to fill out these arrays is in page 27, don't quote me on that.
+  double deltaT = 1/Config.SAMPLING_RATE;
 
   public Filter(double[] a, double[] b, double b0) {
     this.a = a;
