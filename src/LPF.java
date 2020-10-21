@@ -1,41 +1,64 @@
-public class LPF extends Filter 
-    {
-    Module frequencyMod = new Constant(1.0);
-        
-    public void setFrequencyMod(Module frequencyMod) {
-        this.frequencyMod = frequencyMod;
-        }
+import javax.swing.*;
 
-    public Module getFrequencyMod() {
-        return this.frequencyMod;
-        }
+public class LPF extends Filter {
+  Module frequencyMod = new Constant(1.0);
+  private Box GUI;
+  private Dial CutoffDial;
+  private Dial ResonanceDial;
+  private Mul  cutoffMul;
 
-    Module resonanceMod = new Constant(1.0);
-        
-    public void setResonanceMod(Module resonanceMod) {
-        this.resonanceMod = resonanceMod;
-        }
+  public void setFrequencyMod(Module frequencyMod) {
+    this.frequencyMod = frequencyMod;
+  }
 
-    public Module getResonanceMod() {
-        return this.resonanceMod;
-        }
+  public Module getFrequencyMod() {
+    return this.frequencyMod;
+  }
 
-    void updateFilter(double CUTOFF, double Q)
-        {
-        // IMPLEMENT ME
-        }
-        
-    public LPF()
-        {
-        super(new double[2], new double[2], 0);
-        }
-        
-    public static final double MIN_CUTOFF = 10.0;		// don't set the cutoff below this (in Hz)
-    public double tick(long tickCount) 
-        {
-        double q = (resonanceMod.getValue() * 10 + 1) * Math.sqrt(0.5);
-        double cutoff = Math.max(MIN_CUTOFF, Utils.valueToHz(frequencyMod.getValue()));
-        updateFilter(cutoff, q);
-        return super.tick(tickCount);
-        }
-    }
+  Module resonanceMod = new Constant(1.0);
+
+  public void setResonanceMod(Module resonanceMod) {
+    this.resonanceMod = resonanceMod;
+  }
+
+  public Module getResonanceMod() {
+    return this.resonanceMod;
+  }
+
+  void updateFilter(double CUTOFF, double Q) {
+    // IMPLEMENT ME
+  }
+  public LPF() {
+    super(new double[2], new double[2], 0);
+    buildGUI();
+  }
+
+  public LPF(Mul cutoffMul) {
+    this();
+    this.cutoffMul = cutoffMul;
+    cutoffMul.setMultiplier(CutoffDial.getModule());
+  }
+
+  public static final double MIN_CUTOFF = 10.0;		// don't set the cutoff below this (in Hz)
+  public double tick(long tickCount) {
+    double q = (resonanceMod.getValue() * 10 + 1) * Math.sqrt(0.5);
+    double cutoff = Math.max(MIN_CUTOFF, Utils.valueToHz(frequencyMod.getValue()));
+    updateFilter(cutoff, q);
+    return super.tick(tickCount);
+  }
+
+  public Box getGUI(){
+    return GUI;
+  }
+
+  private void buildGUI(){
+    GUI = new Box(BoxLayout.Y_AXIS);
+    GUI.setBorder(BorderFactory.createTitledBorder("Filter"));
+    // build dials for Attack, Decay, Sustain and Release
+    CutoffDial = new Dial(1.0);
+    GUI.add(CutoffDial.getLabelledDial("Cutoff"));
+
+    ResonanceDial = new Dial(0);
+    GUI.add(ResonanceDial.getLabelledDial("Resonance"));
+  }
+}

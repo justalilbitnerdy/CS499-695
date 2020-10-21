@@ -24,7 +24,7 @@ public class Filter extends Module
         {
         
         //// IMPLEMENT ME
-        
+        return 0.0;
         
         }
     }

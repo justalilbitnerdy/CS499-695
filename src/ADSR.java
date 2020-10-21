@@ -9,22 +9,21 @@ import javax.swing.*;
 
 public class ADSR extends Module
 {
-     static final int START = 0;
-     static final int ATTACK = 1;
-     static final int DECAY = 2;
-     static final int SUSTAIN = 3;
-     static final int RELEASE = 4;
-     static final int WAIT_TIME = 2*(int)Config.SAMPLING_RATE;
-//     int state = START;
+    static final int START = 0;
+    static final int ATTACK = 1;
+    static final int DECAY = 2;
+    static final int SUSTAIN = 3;
+    static final int RELEASE = 4;
+    static final int WAIT_TIME = 2*(int)Config.SAMPLING_RATE;
     int stage = START;
     double state = 0.0;
 
-     Module attackLevel = new Constant(1.0);
-     Module attackTime = new Constant(0.01);
-     Module decayTime = new Constant(0.5);
-     Module sustainLevel = new Constant(1.0);
-     Module releaseTime = new Constant(0.01);
-     Module gate = new Constant(0);
+    Module attackLevel = new Constant(1.0);
+    Module attackTime = new Constant(0.01);
+    Module decayTime = new Constant(0.5);
+    Module sustainLevel = new Constant(1.0);
+    Module releaseTime = new Constant(0.01);
+    Module gate = new Constant(0);
 
     // You should find these handy
     double starttime = 0;
@@ -37,6 +36,7 @@ public class ADSR extends Module
     private Dial DecayDial;
     private Dial SustainDial;
     private Dial ReleaseDial;
+    private String name;
 
     public double getAttackTime() { return attackTime.getValue(); }
     public void setAttackTime(Module attackTime) { this.attackTime = attackTime; }
@@ -56,6 +56,7 @@ public class ADSR extends Module
 
     public ADSR(){
         super();
+        this.name = "Env";
         buildGUI();
         setAttackTime(AttackDial.getModule());
         setAttackLevel(AttackLevelDial.getModule());
@@ -63,6 +64,16 @@ public class ADSR extends Module
         setSustainLevel(SustainDial.getModule());
         setReleaseTime(ReleaseDial.getModule());
     }
+    public ADSR(String name){
+      super();
+      this.name = name;
+      buildGUI();
+      setAttackTime(AttackDial.getModule());
+      setAttackLevel(AttackLevelDial.getModule());
+      setDecayTime(DecayDial.getModule());
+      setSustainLevel(SustainDial.getModule());
+      setReleaseTime(ReleaseDial.getModule());
+  }
 
 public double tick(long tickCount) {
     //setup for next stage if required
@@ -187,7 +198,7 @@ public double tick(long tickCount) {
 
     private void buildGUI(){
       GUI = new Box(BoxLayout.Y_AXIS);
-      GUI.setBorder(BorderFactory.createTitledBorder("Env"));
+      GUI.setBorder(BorderFactory.createTitledBorder(name));
       // build dials for Attack, Decay, Sustain and Release
       AttackDial = new Dial(1.0);
       GUI.add(AttackDial.getLabelledDial("Attack Time"));
