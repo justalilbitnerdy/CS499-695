@@ -47,7 +47,7 @@ public class Project2 extends Synth {
     // Build an ADSR for the VCA
     ADSR adsr = new ADSR("Amp Env");
     adsr.setGate(gate);
-    modules.add(adsr);
+    modules.add(lpf);
 
     // Build a VCA controlled by the ADSR which gets its input from the FILTER <--- NOTE CHANGE
     Amplifier VCA = new Amplifier();

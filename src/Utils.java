@@ -132,10 +132,17 @@ public class Utils
         return (OS().indexOf("nix") >= 0 || OS().indexOf("nux") >= 0 || OS().indexOf("aix") > 0 );
         }
 
-  public static double lerp(double v1, double v2, double ctime, double btime, double etime) 
+  public static double lerp(double v1, double v2, double ctime, double btime, double etime)
   {
   double alpha = (ctime - btime) / (etime - btime);
   return (v2 - v1) * alpha + v1;
+  }
+  public static double lerp(double v1, double v2,double rate, double ctime, double btime, double etime)
+  {
+    double alpha = (ctime - btime) / (etime - btime);
+    //I think when he says gamma in the instructions he means alpha, if not, change this
+    alpha = hybridpow(alpha,rate);
+    return (v2 - v1) * alpha + v1;
   }
 
 

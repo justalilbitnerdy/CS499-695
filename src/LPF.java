@@ -36,7 +36,7 @@ public class LPF extends Filter {
   public LPF(Mul cutoffMul) {
     this();
     this.cutoffMul = cutoffMul;
-    cutoffMul.setMultiplier(CutoffDial.getModule());
+    this.cutoffMul.setMultiplier(CutoffDial.getModule());
   }
 
   public static final double MIN_CUTOFF = 10.0;		// don't set the cutoff below this (in Hz)

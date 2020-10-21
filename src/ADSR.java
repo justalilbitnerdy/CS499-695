@@ -175,7 +175,7 @@ public double tick(long tickCount) {
     //      situations where you might divide by zero and handle
     //      those appropriately.  I'd always set the start level
     //      to be whatever level you're currently at.
-    return Utils.lerp(startlevel,endlevel,tickCount,starttime,endtime);
+    return Utils.lerp(startlevel,endlevel,4.0,tickCount,starttime,endtime);
   }
 
   private void switchToReleaseIfNeeded(double tickCount){
