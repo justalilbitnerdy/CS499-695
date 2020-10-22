@@ -5,7 +5,6 @@ public class LPF extends Filter {
   private Box GUI;
   private Dial CutoffDial;
   private Dial ResonanceDial;
-  private Mul  cutoffMul;
 
   public void setFrequencyMod(Module frequencyMod) {
     this.frequencyMod = frequencyMod;
@@ -28,15 +27,10 @@ public class LPF extends Filter {
   void updateFilter(double CUTOFF, double Q) {
     // IMPLEMENT ME
   }
+
   public LPF() {
     super(new double[2], new double[2], 0);
     buildGUI();
-  }
-
-  public LPF(Mul cutoffMul) {
-    this();
-    this.cutoffMul = cutoffMul;
-    this.cutoffMul.setMultiplier(CutoffDial.getModule());
   }
 
   public static final double MIN_CUTOFF = 10.0;		// don't set the cutoff below this (in Hz)
@@ -49,6 +43,10 @@ public class LPF extends Filter {
 
   public Box getGUI(){
     return GUI;
+  }
+
+  public Dial getCutoffDial(){
+    return CutoffDial;
   }
 
   private void buildGUI(){

@@ -31,27 +31,31 @@ public class Project2 extends Synth {
     modules.add(blitMixer);
 
     /// NEW IN PROJECT 2.5*****************************************************************************
-	// Build an ADSR for the filter
+	  // Build an ADSR for the filter
     // Build dials for the ADSR and put it in a box
     ADSR filterADSR = new ADSR("Filter Env");
     filterADSR.setGate(gate);
     modules.add(filterADSR);
-	// Build a Mul to multiply the cutoff by the ADSR output
-	Mul filterMul = new Mul();
-	filterMul.setInput(filterADSR);
-	modules.add(filterMul);
+    // Build a Mul to multiply the cutoff by the ADSR output
+    Mul filterMul = new Mul();
+    filterMul.setInput(filterADSR);
+    modules.add(filterMul);
     // Feed the Mul as the cutoff for a LOW PASS FILTER (also feed in the resonance)
-	LPF lpf = new LPF(filterMul);
+    LPF lpf = new LPF();
+    lpf.setInput(blitMixer);
+    filterMul.setMultiplier(lpf.getCutoffDial().getModule());
+    lpf.setFrequencyMod(filterMul);
+    modules.add(lpf);
     /// END NEW IN PROJECT 2.5************************************************************************
 
     // Build an ADSR for the VCA
     ADSR adsr = new ADSR("Amp Env");
     adsr.setGate(gate);
-    modules.add(lpf);
+    modules.add(adsr);
 
     // Build a VCA controlled by the ADSR which gets its input from the FILTER <--- NOTE CHANGE
     Amplifier VCA = new Amplifier();
-    VCA.setInput(blitMixer);
+    VCA.setInput(lpf);
     VCA.setAmplitudeMod(adsr);
     modules.add(VCA);
 
