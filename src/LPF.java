@@ -26,6 +26,12 @@ public class LPF extends Filter {
 
   void updateFilter(double CUTOFF, double Q) {
     // IMPLEMENT ME
+    double J = 4*Q + 2*CUTOFF*Config.INV_SAMPLING_RATE + CUTOFF*CUTOFF*Q*Config.INV_SAMPLING_RATE*Config.INV_SAMPLING_RATE;
+    this.b0 = CUTOFF*CUTOFF*Q*Config.INV_SAMPLING_RATE*Config.INV_SAMPLING_RATE / J;
+    this.b[0] = 2 * this.b0;
+    this.b[1] = this.b0;
+    this.a[0] = this.b[0] - (8*Q / J);
+    this.a[1] = this.b0 + (4*Q - 2*CUTOFF*Config.INV_SAMPLING_RATE) / J;
   }
 
   public LPF() {
