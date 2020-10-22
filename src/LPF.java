@@ -31,6 +31,7 @@ public class LPF extends Filter {
   public LPF() {
     super(new double[2], new double[2], 0);
     buildGUI();
+    resonanceMod = ResonanceDial.getModule();
   }
 
   public static final double MIN_CUTOFF = 10.0;		// don't set the cutoff below this (in Hz)
