@@ -1,6 +1,6 @@
 import javax.swing.*;
 
-public class LPF extends Filter {
+public class LPF extends Filter implements FilterI {
   Module frequencyMod = new Constant(1.0);
   private Box GUI;
   private Dial CutoffDial;
@@ -25,7 +25,6 @@ public class LPF extends Filter {
   }
 
   void updateFilter(double CUTOFF, double Q) {
-    // IMPLEMENT ME
     double cutoff = 2 * Math.PI * CUTOFF;
     double w2qt2 = cutoff*cutoff*Q*Config.INV_SAMPLING_RATE*Config.INV_SAMPLING_RATE;
     double J = 4*Q + 2*cutoff*Config.INV_SAMPLING_RATE + w2qt2;
@@ -60,7 +59,8 @@ public class LPF extends Filter {
 
   private void buildGUI(){
     GUI = new Box(BoxLayout.Y_AXIS);
-    GUI.setBorder(BorderFactory.createTitledBorder("Filter"));
+    GUI.setBorder(BorderFactory.createTitledBorder("Low Pass"));
+
     // build dials for Attack, Decay, Sustain and Release
     CutoffDial = new Dial(1.0);
     GUI.add(CutoffDial.getLabelledDial("Cutoff"));
