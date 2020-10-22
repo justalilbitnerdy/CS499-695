@@ -22,6 +22,14 @@ public class Filter extends Module {
 
   public double tick(long tickCount) {
     //// IMPLEMENT ME
-    return 0.0;
+    x0 = getInput().getValue();
+    double sum = x0 * b0;
+    for (int i=0; i<a.length; i++) sum -= a[i] * y[i];
+    for (int i=0; i<b.length; i++) sum -= b[i] * x[i];
+    for (int i=a.length-1; i>=1; i--) y[i] = y[i-1];
+    y[0] = sum;
+    for (int i=b.length-1; i>=1; i--) x[i] = x[i-1];
+    x[0] = x0;
+    return sum;
   }
 }
