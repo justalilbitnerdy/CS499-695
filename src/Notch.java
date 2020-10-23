@@ -1,6 +1,6 @@
 import javax.swing.*;
 
-public class BPF extends Filter implements FilterI {
+public class Notch extends Filter implements FilterI {
   Module frequencyMod = new Constant(1.0);
   private Box GUI;
   private Dial CutoffDial;
@@ -28,14 +28,18 @@ public class BPF extends Filter implements FilterI {
     double cutoff = 2 * Math.PI * CUTOFF;
     double w2qt2 = cutoff*cutoff*Q*Config.INV_SAMPLING_RATE*Config.INV_SAMPLING_RATE;
     double J = 4*Q + 2*cutoff*Config.INV_SAMPLING_RATE + w2qt2;
-    this.b0 = 2*cutoff*Q*Q*Config.INV_SAMPLING_RATE / J;
-    this.b[0] = 0;
-    this.b[1] = -1*this.b0;
+    this.b0   = Q*(4+cutoff*cutoff
+                  *Config.INV_SAMPLING_RATE
+                  *Config.INV_SAMPLING_RATE) / J;
+    this.b[0] = Q*(-8+2*cutoff*cutoff
+                  *Config.INV_SAMPLING_RATE
+                  *Config.INV_SAMPLING_RATE) / J;
+    this.b[1] = this.b0;
     this.a[0] = (-8*Q+2*w2qt2) / J;
     this.a[1] = (4*Q - 2*cutoff*Config.INV_SAMPLING_RATE + w2qt2) / J;
   }
 
-  public BPF() {
+  public Notch() {
     super(new double[2], new double[2], 0);
     buildGUI();
     resonanceMod = ResonanceDial.getModule();
@@ -59,7 +63,7 @@ public class BPF extends Filter implements FilterI {
 
   private void buildGUI(){
     GUI = new Box(BoxLayout.Y_AXIS);
-    GUI.setBorder(BorderFactory.createTitledBorder("Band Pass"));
+    GUI.setBorder(BorderFactory.createTitledBorder("Notch"));
 
     // build dials for Attack, Decay, Sustain and Release
     CutoffDial = new Dial(1);

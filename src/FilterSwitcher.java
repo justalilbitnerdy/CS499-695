@@ -7,11 +7,9 @@ public class FilterSwitcher extends Module implements ActionListener {
 
   private Box GUI;
   LPF lpf;
-  boolean lpfEnabled;
   HPF hpf;
-  boolean hpfEnabled;
   BPF bpf;
-  boolean bpfEnabled;
+  Notch notch;
   String currentFilter = "lpf";
 
   public FilterSwitcher() {
@@ -20,6 +18,7 @@ public class FilterSwitcher extends Module implements ActionListener {
     lpf = new LPF();
     hpf = new HPF();
     bpf = new BPF();
+    notch = new Notch();
 
     // Put them in a box and put it in the window
     buildGUI();
@@ -37,12 +36,15 @@ public class FilterSwitcher extends Module implements ActionListener {
       case "bpf":
         value = bpf.getValue();
         break;
+      case "notch":
+        value = notch.getValue();
+        break;
     }
     return value;
   }
 
   public Module[] getModules(){
-    return new Module[]{lpf,hpf,bpf};
+    return new Module[]{lpf,hpf,bpf,notch};
   }
 
 
@@ -72,15 +74,24 @@ public class FilterSwitcher extends Module implements ActionListener {
     bpfBox.add(bpfBtn);
     bpfBox.add(bpf.getGUI());
 
+    Box notchBox = new Box(BoxLayout.X_AXIS);
+    JRadioButton notchBtn = new JRadioButton();
+    notchBtn.setActionCommand("notch");
+    notchBtn.addActionListener(this);
+    notchBox.add(notchBtn);
+    notchBox.add(notch.getGUI());
+
     //setup btns for the different filters
     ButtonGroup group = new ButtonGroup();
     group.add(lpfBtn);
     group.add(hpfBtn);
     group.add(bpfBtn);
+    group.add(notchBtn);
 
     GUI.add(lpfBox);
     GUI.add(hpfBox);
     GUI.add(bpfBox);
+    GUI.add(notchBox);
   }
 
   public void actionPerformed(ActionEvent e) {

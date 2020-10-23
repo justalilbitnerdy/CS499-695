@@ -28,10 +28,10 @@ public class HPF extends Filter implements FilterI {
     double cutoff = 2 * Math.PI * CUTOFF;
     double w2qt2 = cutoff*cutoff*Q*Config.INV_SAMPLING_RATE*Config.INV_SAMPLING_RATE;
     double J = 4*Q + 2*cutoff*Config.INV_SAMPLING_RATE + w2qt2;
-    this.b0 = w2qt2 / J;
-    this.b[0] = 2 * this.b0;
+    this.b0 = 4*Q / J;
+    this.b[0] = -2* this.b0;
     this.b[1] = this.b0;
-    this.a[0] = (2*w2qt2 - 8*Q) / J;
+    this.a[0] = (this.b[0]+2*w2qt2) / J;
     this.a[1] = (4*Q - 2*cutoff*Config.INV_SAMPLING_RATE + w2qt2) / J;
   }
 
