@@ -36,16 +36,25 @@ public class Project2 extends Synth {
     ADSR filterADSR = new ADSR("Filter Env");
     filterADSR.setGate(gate);
     modules.add(filterADSR);
-    // Build a Mul to multiply the cutoff by the ADSR output
-    Mul filterMul = new Mul();
-    filterMul.setInput(filterADSR);
-    modules.add(filterMul);
-    // Feed the Mul as the cutoff for a LOW PASS FILTER (also feed in the resonance)
-    LPF lpf = new LPF();
-    lpf.setInput(blitMixer);
-    filterMul.setMultiplier(lpf.getCutoffDial().getModule());
-    lpf.setFrequencyMod(filterMul);
-    modules.add(lpf);
+    FilterSwitcher filterSwitcher = new FilterSwitcher();
+    //add modules inside filterSwitcher
+    for(Module m:filterSwitcher.getModules()){
+      // Build a Mul to multiply the cutoff by the ADSR output
+      Mul filterMul = new Mul();
+      filterMul.setInput(filterADSR);
+      modules.add(filterMul);
+
+      //I don't really want to rewrite Filter, so this sucks but I mean... it works?
+      if(m instanceof FilterI){
+        ((FilterI)m).setInput(blitMixer);
+        // Feed the Mul as the cutoff for a LOW PASS FILTER (also feed in the resonance)
+        filterMul.setMultiplier(((FilterI)m).getCutoffDial().getModule());
+        ((FilterI)m).setFrequencyMod(filterMul);
+      }
+      modules.add(m);
+    }
+    modules.add(filterSwitcher);
+
     /// END NEW IN PROJECT 2.5************************************************************************
 
     // Build an ADSR for the VCA
@@ -55,7 +64,7 @@ public class Project2 extends Synth {
 
     // Build a VCA controlled by the ADSR which gets its input from the FILTER <--- NOTE CHANGE
     Amplifier VCA = new Amplifier();
-    VCA.setInput(lpf);
+    VCA.setInput(filterSwitcher);
     VCA.setAmplitudeMod(adsr);
     modules.add(VCA);
 
@@ -84,8 +93,8 @@ public class Project2 extends Synth {
 
     //setup gui
     outer.add(blitMixer.getGUI());
-	outer.add(filterADSR.getGUI());
-	outer.add(lpf.getGUI());
+    outer.add(filterADSR.getGUI());
+    outer.add(filterSwitcher.getGUI());
     outer.add(adsr.getGUI());
     outer.add(outputBox);
 

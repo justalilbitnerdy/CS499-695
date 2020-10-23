@@ -6,8 +6,6 @@ public class Filter extends Module {
   double[] x;
   double[] y;
   double x0;
-  //I believe the way to fill out these arrays is in page 27, don't quote me on that.
-  double deltaT = 1/Config.SAMPLING_RATE;
 
   public Filter(double[] a, double[] b, double b0) {
     this.a = a;
@@ -21,7 +19,6 @@ public class Filter extends Module {
   public void setInput(Module input) { this.input = input; }
 
   public double tick(long tickCount) {
-    //// IMPLEMENT ME
     x0 = getInput().getValue();
     double sum = x0 * b0;
     for (int i=0; i<a.length; i++) sum -= a[i] * y[i];
