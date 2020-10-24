@@ -19,7 +19,7 @@ public class Filter extends Module {
   public void setInput(Module input) { this.input = input; }
 
   public double tick(long tickCount) {
-    x0 = getInput().getValue();
+    x0 = getInput().getValue() - 0.5;
     double sum = x0 * b0;
     for (int i=0; i<a.length; i++) sum -= a[i] * y[i];
     for (int i=0; i<b.length; i++) sum += b[i] * x[i];
@@ -27,6 +27,6 @@ public class Filter extends Module {
     y[0] = sum;
     for (int i=b.length-1; i>=1; i--) x[i] = x[i-1];
     x[0] = x0;
-    return sum;
+    return sum + 0.5;
   }
 }

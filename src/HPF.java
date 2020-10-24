@@ -31,7 +31,7 @@ public class HPF extends Filter implements FilterI {
     this.b0 = 4*Q / J;
     this.b[0] = -2* this.b0;
     this.b[1] = this.b0;
-    this.a[0] = (this.b[0]+2*w2qt2) / J;
+    this.a[0] = (2*w2qt2 - 8*Q) / J;
     this.a[1] = (4*Q - 2*cutoff*Config.INV_SAMPLING_RATE + w2qt2) / J;
   }
 
