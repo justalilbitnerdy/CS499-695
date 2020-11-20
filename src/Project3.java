@@ -27,6 +27,7 @@ public class Project3 extends Synth {
     // Due to the From Operator portion I can't make Operator its own class...
     // This should be fun
     PM    ops[] = new PM[NUM_OPERATORS];
+    Amplifier opAmps[] = new Amplifier[NUM_OPERATORS];
     Mixer opMixers[] = new Mixer[NUM_OPERATORS];
     Dial inDials[][] = new Dial[NUM_OPERATORS][NUM_OPERATORS];// Incoming modulation dial [To][From]
     Dial[] outDials = new Dial[NUM_OPERATORS];// Out dials
@@ -38,6 +39,9 @@ public class Project3 extends Synth {
       ops[i] = new PM();
       ops[i].setFrequencyMod(midimod);
       modules.add(ops[i]);
+      opAmps[i] = new Amplifier();
+      opAmps[i].setInput(ops[i]);
+      modules.add(opAmps[i]);
 
       //initialize all of the dials
       outDials[i] = new Dial(1.0);
@@ -106,8 +110,7 @@ public class Project3 extends Synth {
       opMul.setInput(adsr);
       opMul.setMultiplier(gainDial.getModule());
       modules.add(opMul);
-      ops[i].setOutputAmplitude(opMul);
-
+      opAmps[i].setAmplitudeMod(opMul);
 
       // Add dials and modules for the four signals
       Module inOpModules[] = new Module[NUM_OPERATORS];
@@ -198,7 +201,7 @@ public class Project3 extends Synth {
     outputBox.add(opt);
 
     // Make a final mixer whose inputs are the operators, controlled by their Out dials
-    Mixer opMixer = new Mixer(ops, opModules);
+    Mixer opMixer = new Mixer(opAmps, opModules);
     modules.add(opMixer);
 
     // Make a VCA fed by the mixer, controlled by a final Gain dial
