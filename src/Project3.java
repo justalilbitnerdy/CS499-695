@@ -27,18 +27,20 @@ public class Project3 extends Synth {
     // FOR EACH OPERATOR (4 operators)
     // Due to the From Operator portion I can't make Operator its own class...
     // This should be fun
-    Mixer ops[] = new Mixer[NUM_OPERATORS];
-    Dial dials[][] = new Dial[NUM_OPERATORS][NUM_OPERATORS];// Incoming modulation dial [To][From]
+    PM    ops[] = new PM[NUM_OPERATORS];
+    Mixer opMixers[] = new Mixer[NUM_OPERATORS];
+    Dial inDials[][] = new Dial[NUM_OPERATORS][NUM_OPERATORS];// Incoming modulation dial [To][From]
     Dial[] outDials = new Dial[NUM_OPERATORS];// Out dials
     Module[] opModules = new Module[NUM_OPERATORS];// Out dials
     for(int i=0;i<NUM_OPERATORS;i++){
       outDials[i] = new Dial(1.0);
       modules.add(outDials[i].getModule());
       opModules[i] = outDials[i].getModule();
+      ops[i] = new PM();
       for(int j = 0;j<NUM_OPERATORS;j++){
         Dial signalDial = new Dial(0);
         modules.add(signalDial.getModule());
-        dials[i][j] = signalDial;
+        inDials[i][j] = signalDial;
       }
     }
     for(int i = 1;i<=NUM_OPERATORS;i++){
@@ -75,8 +77,6 @@ public class Project3 extends Synth {
       modules.add(gainDial.getModule());
 
       // Make the operator
-      PM op = new PM();
-      ops[i-1] = op;
       opModules[i-1] = gainDial.getModule();
 
       // Add Relative Frequency
@@ -88,15 +88,30 @@ public class Project3 extends Synth {
                            DecayDial.getModule(),
                            SustainDial.getModule(),
                            ReleaseDial.getModule());
+      adsr.setGate(gate);
       modules.add(adsr);
       // *Multiply* (not amplify) the ADSR output against a Gain
       Mul opMul = new Mul();
       opMul.setInput(adsr);
       opMul.setMultiplier(gainDial.getModule());
+      modules.add(opMul);
+      ops[i-1].setOutputAmplitude(opMul);
+
+      //setup input operator Dials for mixer
+      Module inOpsDials[] = new Module[NUM_OPERATORS];
+      for(int j = 0;j<NUM_OPERATORS;j++){
+        inOpsDials[j] = inDials[i-1][j].getModule();
+      }
+
       // Add a Mixer to mix in incoming signals from all four operators
+      Mixer opMixer = new Mixer(ops,inOpsDials);
+      opMixers[i-1] = opMixer;
+      ops[i-1].setPhaseModulator(opMixer);
+      modules.add(opMixer);
+
       // Add dials for the four signals
-      for(int j = 0;j<dials[i-1].length;j++){
-          opBox.add(dials[i-1][j].getLabelledDial("Operator " + (j+1)));
+      for(int j = 0;j<inDials[i-1].length;j++){
+        opBox.add(inDials[i-1][j].getLabelledDial("Operator " + (j+1)));
       }
       opBox.add(outDials[i-1].getLabelledDial("Out"));
       outer.add(opBox);
@@ -116,46 +131,45 @@ public class Project3 extends Synth {
     Options opt = new Options("Algorithms", ALGORITHMS, 6) {
       public void update(int val) {
         // This is a race condition, but I'll just update the dials, it won't be too bad
-        for(int i = 0; i < dials.length; i++)
-          for(int j = 0; j < dials[i].length; j++)
-            dials[i][j].getModule().setValue(0);
-
-        for(int i = 0; i < dials.length; i++)
+        for(int i = 0; i < inDials.length; i++){
           outDials[i].getModule().setValue(0);
+          for(int j = 0; j < inDials[i].length; j++)
+            inDials[i][j].getModule().setValue(0);
+        }
 
         switch(val) {
           case 0:
-            dials[3][2].getModule().setValue(1);
-            dials[2][1].getModule().setValue(1);
-            dials[1][0].getModule().setValue(1);
+            inDials[3][2].getModule().setValue(1);
+            inDials[2][1].getModule().setValue(1);
+            inDials[1][0].getModule().setValue(1);
             outDials[3].getModule().setValue(1);
             break;
           case 1:
-            dials[3][1].getModule().setValue(1);
-            dials[1][0].getModule().setValue(1);
+            inDials[3][1].getModule().setValue(1);
+            inDials[1][0].getModule().setValue(1);
             outDials[3].getModule().setValue(1);
             outDials[2].getModule().setValue(1);
             break;
           case 2:
-            dials[3][1].getModule().setValue(1);
-            dials[1][0].getModule().setValue(1);
-            dials[3][2].getModule().setValue(1);
+            inDials[3][1].getModule().setValue(1);
+            inDials[1][0].getModule().setValue(1);
+            inDials[3][2].getModule().setValue(1);
             outDials[3].getModule().setValue(1);
             break;
           case 3:
-            dials[3][1].getModule().setValue(1);
-            dials[3][0].getModule().setValue(1);
-            dials[3][2].getModule().setValue(1);
+            inDials[3][1].getModule().setValue(1);
+            inDials[3][0].getModule().setValue(1);
+            inDials[3][2].getModule().setValue(1);
             outDials[3].getModule().setValue(1);
             break;
           case 4:
-            dials[1][0].getModule().setValue(1);
-            dials[3][2].getModule().setValue(1);
+            inDials[1][0].getModule().setValue(1);
+            inDials[3][2].getModule().setValue(1);
             outDials[3].getModule().setValue(1);
             outDials[1].getModule().setValue(1);
             break;
           case 5:
-            dials[1][0].getModule().setValue(1);
+            inDials[1][0].getModule().setValue(1);
             outDials[3].getModule().setValue(1);
             outDials[2].getModule().setValue(1);
             outDials[1].getModule().setValue(1);
