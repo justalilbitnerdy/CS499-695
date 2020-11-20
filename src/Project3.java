@@ -96,6 +96,7 @@ public class Project3 extends Synth {
       opMul.setMultiplier(gainDial.getModule());
       modules.add(opMul);
       ops[i-1].setOutputAmplitude(opMul);
+      modules.add(ops[i-1]);
 
       //setup input operator Dials for mixer
       Module inOpsDials[] = new Module[NUM_OPERATORS];
@@ -187,6 +188,7 @@ public class Project3 extends Synth {
     // Make a final mixer whose inputs are the operators, controlled by their Out dials
 
     Mixer opMixer = new Mixer(ops, opModules);
+    modules.add(opMixer);
     // Make a VCA fed by the mixer, controlled by a final Gain dial
     Dial gainDial = new Dial(1.0);
     outputBox.add(gainDial.getLabelledDial("Gain"));

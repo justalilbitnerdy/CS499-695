@@ -29,7 +29,7 @@ public class PM extends Osc
         {
         // IMPLEMENT ME
         // REMEMBER TO CENTER THE INCOMING MODULATION WAVE AND THE OUTGOING FINAL WAVE AROUND 0.5
-            return 0.0;
+            return 0.5;
     }
     
     }
