@@ -27,15 +27,17 @@ public class Project3 extends Synth {
     // FOR EACH OPERATOR (4 operators)
     // Due to the From Operator portion I can't make Operator its own class...
     // This should be fun
-    PM ops[] = new PM[NUM_OPERATORS];
-    Module opGains[] = new Module[NUM_OPERATORS];
+    Mixer ops[] = new Mixer[NUM_OPERATORS];
     Dial dials[][] = new Dial[NUM_OPERATORS][NUM_OPERATORS];// Incoming modulation dial [To][From]
     Dial[] outDials = new Dial[NUM_OPERATORS];// Out dials
+    Module[] opModules = new Module[NUM_OPERATORS];// Out dials
     for(int i=0;i<NUM_OPERATORS;i++){
       outDials[i] = new Dial(1.0);
+      modules.add(outDials[i].getModule());
+      opModules[i] = outDials[i].getModule();
       for(int j = 0;j<NUM_OPERATORS;j++){
-        Dial signalDial = new Dial(1.0);
-        signalDial.update(.1);
+        Dial signalDial = new Dial(0);
+        modules.add(signalDial.getModule());
         dials[i][j] = signalDial;
       }
     }
@@ -46,41 +48,55 @@ public class Project3 extends Synth {
       // setup dials
       Dial relativeFreq = new Dial(.1);
       opBox.add(relativeFreq.getLabelledDial("Relative Frequency"));
-      Dial AttackDial = new Dial(1.0);
+      modules.add(relativeFreq.getModule());
+
+      Dial AttackDial = new Dial(.1);
       opBox.add(AttackDial.getLabelledDial("Attack Time"));
-      AttackDial.update(.1);
+      modules.add(AttackDial.getModule());
+
       Dial AttackLevelDial = new Dial(1.0);
       opBox.add(AttackLevelDial.getLabelledDial("Attack Level"));
-      Dial DecayDial = new Dial(1.0);
+      modules.add(AttackLevelDial.getModule());
+
+      Dial DecayDial = new Dial(0);
       opBox.add(DecayDial.getLabelledDial("Decay Time"));
-      DecayDial.update(0);
+      modules.add(DecayDial.getModule());
+
       Dial SustainDial = new Dial(1.0);
       opBox.add(SustainDial.getLabelledDial("Sustain"));
-      Dial ReleaseDial = new Dial(1.0);
+      modules.add(SustainDial.getModule());
+
+      Dial ReleaseDial = new Dial(.1);
       opBox.add(ReleaseDial.getLabelledDial("Release Time"));
-      ReleaseDial.update(.1);
+      modules.add(ReleaseDial.getModule());
       // Add an Out dial
       Dial gainDial = new Dial(1.0);
       opBox.add(gainDial.getLabelledDial("gain"));
+      modules.add(gainDial.getModule());
+
       // Make the operator
       PM op = new PM();
       ops[i-1] = op;
-      opGains[i-1] = gainDial.getModule();
+      opModules[i-1] = gainDial.getModule();
 
       // Add Relative Frequency
 
       // Add an ADSR
+      // Add Attack Time, Decay Time, Sustain, Release Time
       ADSR adsr = new ADSR(AttackDial.getModule(),
                            AttackLevelDial.getModule(),
                            DecayDial.getModule(),
                            SustainDial.getModule(),
                            ReleaseDial.getModule());
-      // Add Attack Time, Decay Time, Sustain, Release Time
+      modules.add(adsr);
       // *Multiply* (not amplify) the ADSR output against a Gain
+      Mul opMul = new Mul();
+      opMul.setInput(adsr);
+      opMul.setMultiplier(gainDial.getModule());
       // Add a Mixer to mix in incoming signals from all four operators
       // Add dials for the four signals
       for(int j = 0;j<dials[i-1].length;j++){
-        opBox.add(dials[i-1][j].getLabelledDial("Operator " + (j+1)));
+          opBox.add(dials[i-1][j].getLabelledDial("Operator " + (j+1)));
       }
       opBox.add(outDials[i-1].getLabelledDial("Out"));
       outer.add(opBox);
@@ -155,14 +171,18 @@ public class Project3 extends Synth {
     };
     outputBox.add(opt);
     // Make a final mixer whose inputs are the operators, controlled by their Out dials
-    Mixer opMixer = new Mixer(ops, opGains);
+
+    Mixer opMixer = new Mixer(ops, opModules);
     // Make a VCA fed by the mixer, controlled by a final Gain dial
     Dial gainDial = new Dial(1.0);
     outputBox.add(gainDial.getLabelledDial("Gain"));
+    modules.add(gainDial.getModule());
+
     Amplifier VCA = new Amplifier();
-    //VCA.setInput(midimod);
+    VCA.setInput(opMixer);
     VCA.setAmplitudeMod(gainDial.getModule());
     modules.add(VCA);
+
     // Make an oscilloscope fed by the VCA.  I'd set	 oscope.setDelay(1);
     Oscilloscope oscope = new Oscilloscope();
     oscope.setDelay(1);
