@@ -25,14 +25,11 @@ public class PM extends Osc
 
     double state = 0;
     
-    public double tick(long tickCount) 
-    {
+    public double tick(long tickCount) {
         // IMPLEMENT ME
         // REMEMBER TO CENTER THE INCOMING MODULATION WAVE AND THE OUTGOING FINAL WAVE AROUND 0.5
         double out = Math.sin(2*Math.PI*(super.tick(tickCount)+phaseAmplifier.getValue()*phaseModulator.getValue()));
         out /= 2;
-        out += 0.5;
-        return out;
+        return out*outputAmplitude.getValue()+.5;
     }
-    
-    }
+}

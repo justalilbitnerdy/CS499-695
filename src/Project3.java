@@ -13,18 +13,17 @@ public class Project3 extends Synth {
     // Build a MidiModule
     MidiModule midimod = new MidiModule(getMidi());
     modules.add(midimod);
+
     // Build a MidiGate
     MidiGate gate = new MidiGate(midimod);
     modules.add(gate);
+
     // Create the window
     JFrame frame = new JFrame();
     Box outer = new Box(BoxLayout.X_AXIS);
     frame.setContentPane(outer);
-    // I moved this up here so I can add the boxes to the gui
-    // Make an Other box
-    Box outputBox = new Box(BoxLayout.Y_AXIS);
-    outputBox.setBorder(BorderFactory.createTitledBorder("Output"));
-    // FOR EACH OPERATOR (4 operators)
+
+    // FOR EACH OPERATOR (N operators)
     // Due to the From Operator portion I can't make Operator its own class...
     // This should be fun
     PM    ops[] = new PM[NUM_OPERATORS];
@@ -32,26 +31,35 @@ public class Project3 extends Synth {
     Dial inDials[][] = new Dial[NUM_OPERATORS][NUM_OPERATORS];// Incoming modulation dial [To][From]
     Dial[] outDials = new Dial[NUM_OPERATORS];// Out dials
     Module[] opModules = new Module[NUM_OPERATORS];// Out dials
+
+    //initialize all arrays
     for(int i=0;i<NUM_OPERATORS;i++){
+      //create operator
+      ops[i] = new PM();
+      ops[i].setFrequencyMod(midimod);
+      modules.add(ops[i]);
+
+      //initialize all of the dials
       outDials[i] = new Dial(1.0);
       modules.add(outDials[i].getModule());
       opModules[i] = outDials[i].getModule();
-      ops[i] = new PM();
-      ops[i].setFrequencyMod(midimod);
+      //initialize the inDials
       for(int j = 0;j<NUM_OPERATORS;j++){
         Dial signalDial = new Dial(0);
         modules.add(signalDial.getModule());
         inDials[i][j] = signalDial;
       }
     }
-    for(int i = 1;i<=NUM_OPERATORS;i++){
+
+    for(int i = 0;i<NUM_OPERATORS;i++){
       // Make a box
       Box opBox = new Box(BoxLayout.Y_AXIS);
-      opBox.setBorder(BorderFactory.createTitledBorder("Operator "+i));
-      // setup dials
-      Dial relativeFreq = new Dial(.1);
-      opBox.add(relativeFreq.getLabelledDial("Relative Frequency"));
-      modules.add(relativeFreq.getModule());
+      opBox.setBorder(BorderFactory.createTitledBorder("Operator "+i+1));
+
+      // setup dials************************************************************
+      Dial relativeFreqDial = new Dial(.1);
+      opBox.add(relativeFreqDial.getLabelledDial("Relative Frequency"));
+      modules.add(relativeFreqDial.getModule());
 
       Dial AttackDial = new Dial(.1);
       opBox.add(AttackDial.getLabelledDial("Attack Time"));
@@ -72,19 +80,20 @@ public class Project3 extends Synth {
       Dial ReleaseDial = new Dial(.1);
       opBox.add(ReleaseDial.getLabelledDial("Release Time"));
       modules.add(ReleaseDial.getModule());
+
       // Add an Out dial
       Dial gainDial = new Dial(1.0);
       opBox.add(gainDial.getLabelledDial("gain"));
       modules.add(gainDial.getModule());
-
-      // Make the operator
-      opModules[i-1] = gainDial.getModule();
+      // Done with dials********************************************************
 
       // Add Relative Frequency
-      ops[i-1].setRelativeFrequency(relativeFreq.getModule());
+      ops[i].setRelativeFrequency(relativeFreqDial.getModule());
 
-      // Add an ADSR
-      // Add Attack Time, Decay Time, Sustain, Release Time
+      // Make the operator
+      opModules[i] = gainDial.getModule();
+
+      // Add an ADSR | Add Attack Time, Decay Time, Sustain, Release Time
       ADSR adsr = new ADSR(AttackDial.getModule(),
                            AttackLevelDial.getModule(),
                            DecayDial.getModule(),
@@ -97,30 +106,26 @@ public class Project3 extends Synth {
       opMul.setInput(adsr);
       opMul.setMultiplier(gainDial.getModule());
       modules.add(opMul);
-      ops[i-1].setOutputAmplitude(opMul);
-      modules.add(ops[i-1]);
+      ops[i].setOutputAmplitude(opMul);
 
-      //setup input operator Dials for mixer
-      Module inOpsDials[] = new Module[NUM_OPERATORS];
-      for(int j = 0;j<NUM_OPERATORS;j++){
-        inOpsDials[j] = inDials[i-1][j].getModule();
+
+      // Add dials and modules for the four signals
+      Module inOpModules[] = new Module[NUM_OPERATORS];
+      //get the correct modules from the dials in a nice mixer friendly format
+      for(int j = 0;j<inDials[i].length;j++){
+        inOpModules[j] = inDials[i][j].getModule();
+        opBox.add(inDials[i][j].getLabelledDial("Operator " + (j+1)));
       }
-
       // Add a Mixer to mix in incoming signals from all four operators
-      Mixer opMixer = new Mixer(ops,inOpsDials);
-      opMixers[i-1] = opMixer;
-      ops[i-1].setPhaseModulator(opMixer);
-      modules.add(opMixer);
+      opMixers[i] = new Mixer(ops,inOpModules);
+      modules.add(opMixers[i]);
+      ops[i].setPhaseModulator(opMixers[i]);
 
-      // Add dials for the four signals
-      for(int j = 0;j<inDials[i-1].length;j++){
-        opBox.add(inDials[i-1][j].getLabelledDial("Operator " + (j+1)));
-      }
-      opBox.add(outDials[i-1].getLabelledDial("Out"));
+      opBox.add(outDials[i].getLabelledDial("Out"));
       outer.add(opBox);
     }
-    // Add Algorithm.  I'm nice and provided most of it for you below
 
+    // Add Algorithm.  I'm nice and provided most of it for you below
     final String[] ALGORITHMS = new String[] {
       "1>2>3>4",
       "1>2>4, 3",
@@ -186,11 +191,16 @@ public class Project3 extends Synth {
         }
       }
     };
-    outputBox.add(opt);
-    // Make a final mixer whose inputs are the operators, controlled by their Out dials
 
+    // Make an Other box
+    Box outputBox = new Box(BoxLayout.Y_AXIS);
+    outputBox.setBorder(BorderFactory.createTitledBorder("Output"));
+    outputBox.add(opt);
+    
+    // Make a final mixer whose inputs are the operators, controlled by their Out dials
     Mixer opMixer = new Mixer(ops, opModules);
     modules.add(opMixer);
+
     // Make a VCA fed by the mixer, controlled by a final Gain dial
     Dial gainDial = new Dial(1.0);
     outputBox.add(gainDial.getLabelledDial("Gain"));
@@ -208,10 +218,13 @@ public class Project3 extends Synth {
     modules.add(omodule);
     omodule.setAmplitudeModule(VCA);
     outputBox.add(oscope);
+
     //setup display
     outer.add(outputBox);
-    // Output the VCA or oscilloscope
+
+    // Output the oscilloscope
     setOutput(omodule);
+
     // Pack and display the window
     frame.addWindowListener(new java.awt.event.WindowAdapter() {
       @Override
@@ -219,10 +232,7 @@ public class Project3 extends Synth {
         System.exit(0);
       }
     });
-    // Pack and display the window
     frame.pack();
     frame.setVisible(true);
-
-    // Some code you might find useful
   }
 }
