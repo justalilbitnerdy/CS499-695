@@ -1,2 +1,2 @@
-Main-Class: Project2
+Main-Class: Project3
 Class-Path: ../lib\coremidi4j-1.1.jar

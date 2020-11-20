@@ -20,4 +20,7 @@ public class Mul extends Module
     {
     return input.getValue() * multiplier.getValue();
     }
+    
+    public Mul() { super(); }
+    public Mul(double multiplier) { super(); setMultiplier(new Constant(multiplier)); }
 }

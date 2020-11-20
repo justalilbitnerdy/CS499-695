@@ -75,6 +75,19 @@ public class ADSR extends Module
       setReleaseTime(ReleaseDial.getModule());
   }
 
+  public ADSR(Module AttackTime,
+              Module AttackLevel,
+              Module Decay,
+              Module Sustain,
+              Module Release){
+    super();
+    setAttackTime(AttackTime);
+    setAttackLevel(AttackLevel);
+    setDecayTime(Decay);
+    setSustainLevel(Sustain);
+    setReleaseTime(Release);
+}
+
 public double tick(long tickCount) {
     //setup for next stage if required
     switch (stage){

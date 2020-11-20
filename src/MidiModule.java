@@ -19,6 +19,10 @@ public class MidiModule extends Module
     private double velocity;
     private double bend = 1.0;
     private double rawBend;
+    private double aftertouch = 0.5;
+    private double[] cc = new double[128];
+    private boolean[] newcc = new boolean[128];
+    private boolean[] newcc_zero = new boolean[128];
 
     public MidiModule(Midi midi) { this.midi = midi; }
 
@@ -29,6 +33,12 @@ public class MidiModule extends Module
     public double getVelocity() { return velocity; }
 
     public double getGate() { return velocity > 0 ? 1 : 0; }
+
+	public double getAftertouch() { return aftertouch; }
+	
+	public double getCC(int param) { return cc[param]; }
+	
+	public boolean isCCNew(int param) { return newcc[param]; }
 
     // Processes a PITCH BEND message.
     void processPitchBend(ShortMessage sm) 
@@ -110,10 +120,24 @@ public class MidiModule extends Module
                         on_notes.removeIf(n -> n.note == note);
                         break;
                         }
-                    case ShortMessage.PITCH_BEND:
-                        {
-                        processPitchBend(sm);
-                        }
+					case ShortMessage.PITCH_BEND:
+						{
+						processPitchBend(sm);
+						}
+						break;
+					case ShortMessage.CONTROL_CHANGE:
+						{
+						int param = sm.getData1();
+						int val = sm.getData2();
+						cc[param] = val / 127.0;	// so it ranges 0...1
+						newcc[param] = true;
+						}
+						break;
+					case ShortMessage.CHANNEL_PRESSURE:
+						{
+						aftertouch = sm.getData1() / 127.0;		// so it ranges 0...1
+						}
+						break;
                     default:
                         {
                         break;

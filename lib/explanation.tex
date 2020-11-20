@@ -1,0 +1,37 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+
+
+\begin{document}
+
+In the text, the phase modulation equation is:
+
+\[
+\begin{split}
+x_i^{(t)} &\leftarrow x_i^{(t-1)} + 2 \pi f_i \Delta t \mod 2 \pi\\
+y_i^{(t)} &\leftarrow \sin\left(x_i^{(t)} + \sum_{j \in \text{Mods(\(i\))}} y_j^{(t-1)}\right) \times a_i^{(t)}
+\end{split}
+\]
+
+Let's modify this slightly, introducing a \(b_j\), to:
+
+\[
+\begin{split}
+x_i^{(t)} &\leftarrow x_i^{(t-1)} + 2 \pi f_i \Delta t \mod 2 \pi\\
+y_i^{(t)} &\leftarrow \sin\left(x_i^{(t)} + b_i \sum_{j \in \text{Mods(\(i\))}} y_j^{(t-1)}\right) \times a_i^{(t)}
+\end{split}
+\]
+
+Here:
+
+\begin{itemize}
+\item \(f_i\) is the frequency of the oscillator: it's the current pitch \(p\) (that is, the FREQUENCY MOD) times the RELATIVE FREQUENCY MOD of this oscillator \(r_i\) so \(f_i = p \times r_i\).  Furthermore, since RELATIVE FREQUENCY MOD is a dial, I'd then multiply the result by MAX\_RELATIVE\_FREQUENCY so the dial goes 0...8 rather than 0...1.
+\item \(y_j^{(t-1)}\) is a PHASE MODULATOR.  In the code we gave you the PM class only accepts one PHASE MODULATOR.  If you want the situation where multiple operators are modulating the same carrier, you could modify the code to allow multiple phase modulators or you could make a ``mixer'' class that adds several modulators and hen use that as the phase modulator.
+\item \(a_i^{(t)}\) is the OUTPUT AMPLITUDE.  This is an envelope, one per carrier.
+\item \(b_i\) is the PHASE AMPLIFIER.   This is a dial, multiplied by MAX\_PHASE\_AMPLIFICATION.
+\item \(y_i^{(t)}\) is the output of this operator, and could be used as a phase modulator for {\it other} operators, or could be used as part of the final output sound.
+\end{itemize}
+
+\end{document}
+

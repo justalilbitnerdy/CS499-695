@@ -1,26 +1,25 @@
-/** A mixer for multiple inputs, each multiplied by an amplitude. */
-
 public class Mixer extends Module
     {
     Module[] inputs;
     Module[] amplitudeMods;
-
+    
     public Mixer(int numInputs)
         {
         inputs = new Module[numInputs];
         amplitudeMods = new Module[numInputs];
         for(int i = 0; i < numInputs; i++)
         	{
-        	inputs[i] = new Constant(0);
-        	amplitudeMods[i] = new Constant(0);
+        	inputs[i] = new Constant(0.5);
+        	amplitudeMods[i] = new Constant(0.5);
         	}
         }
-
-    public Mixer(Module[] inputs, Module[] amplitudeMods) {
+        
+    public Mixer(Module[] inputs, Module[] amplitudeMods)
+    	{
     	this.inputs = inputs;
     	this.amplitudeMods = amplitudeMods;
-    }
-
+    	}
+        
     public Module getInput(int val) { return inputs[val]; }
     public void setInput(int val, Module input) { inputs[val] = input; }
 

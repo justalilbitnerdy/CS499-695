@@ -30,33 +30,6 @@ public class Project2 extends Synth {
     }
     modules.add(blitMixer);
 
-    /// NEW IN PROJECT 2.5*****************************************************************************
-	  // Build an ADSR for the filter
-    // Build dials for the ADSR and put it in a box
-    ADSR filterADSR = new ADSR("Filter Env");
-    filterADSR.setGate(gate);
-    modules.add(filterADSR);
-    FilterSwitcher filterSwitcher = new FilterSwitcher();
-    //add modules inside filterSwitcher
-    for(Module m:filterSwitcher.getModules()){
-      // Build a Mul to multiply the cutoff by the ADSR output
-      Mul filterMul = new Mul();
-      filterMul.setInput(filterADSR);
-      modules.add(filterMul);
-
-      //I don't really want to rewrite Filter, so this sucks but I mean... it works?
-      if(m instanceof FilterI){
-        ((FilterI)m).setInput(blitMixer);
-        // Feed the Mul as the cutoff for a LOW PASS FILTER (also feed in the resonance)
-        filterMul.setMultiplier(((FilterI)m).getCutoffDial().getModule());
-        ((FilterI)m).setFrequencyMod(filterMul);
-      }
-      modules.add(m);
-    }
-    modules.add(filterSwitcher);
-
-    /// END NEW IN PROJECT 2.5************************************************************************
-
     // Build an ADSR for the VCA
     ADSR adsr = new ADSR("Amp Env");
     adsr.setGate(gate);

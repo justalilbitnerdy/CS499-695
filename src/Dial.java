@@ -46,8 +46,25 @@ public class Dial extends JPanel
     private JLabel title = null;
     private JLabel data = null;
 
+	MidiModule midiMod;
+	int ccParam;
+	
+	public void attach(MidiModule midiMod, int ccParam)
+		{
+		this.ccParam = ccParam;
+		this.midiMod = midiMod;
+		}
+		
+	public void detach()
+		{
+		this.midiMod = null;
+		}
+
     class DialModule extends Module
         {
+        static final double alpha = 0.01;
+        double val = 0;
+        
         ReentrantLock lock = new ReentrantLock();
 
         public void setValueNoRepaint(double value) 
@@ -69,12 +86,15 @@ public class Dial extends JPanel
             repaint();
             }
                 
+        public double superGetValue() { return super.getValue(); }
+        
         public double getValue()
             {
             lock.lock();
             try
                 {
-                return super.getValue();
+                val = (1-alpha) * val + alpha * super.getValue();
+                return val;
                 }
             finally
                 {
@@ -83,7 +103,17 @@ public class Dial extends JPanel
             }
 
         public double tick(long tickCount) { return 0; }  // unused
-        public void doUpdate(long tickCount) { }
+        public void doUpdate(long tickCount) 
+        	{
+        	getValue();  // so we update alpha
+        	if (midiMod != null)
+        		{
+        		if (midiMod.isCCNew(ccParam))	// something new came in
+        			{
+	        		setValue(midiMod.getCC(ccParam));
+	        		}
+        		} 
+        	}
         };
 
     private DialModule dialModule = new DialModule();
@@ -120,7 +150,7 @@ public class Dial extends JPanel
                 
     double getState() 
         { 
-        return dialModule.getValue(); 
+        return dialModule.superGetValue(); 
         }
         
     /** Returns the actual square within which the Dial's circle is drawn. */
