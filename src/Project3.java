@@ -75,8 +75,8 @@ public class Project3 extends Synth {
       // *Multiply* (not amplify) the ADSR output against a Gain
       // Add a Mixer to mix in incoming signals from all four operators
       // Add dials for the four signals
-      for(int j = 0;j<dials[i].length;j++){
-        opBox.add(dials[i][j].getLabelledDial("Operator " + j));
+      for(int j = 0;j<dials[i-1].length;j++){
+        opBox.add(dials[i-1][j].getLabelledDial("Operator " + j));
       }
       outer.add(opBox);
     }
