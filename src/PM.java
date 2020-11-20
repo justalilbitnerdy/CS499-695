@@ -28,8 +28,17 @@ public class PM extends Osc
     public double tick(long tickCount) {
         // IMPLEMENT ME
         // REMEMBER TO CENTER THE INCOMING MODULATION WAVE AND THE OUTGOING FINAL WAVE AROUND 0.5
-        double out = Math.sin(2*Math.PI*(super.tick(tickCount)+phaseAmplifier.getValue()*phaseModulator.getValue()));
+        double hz = Utils.valueToHz(getFrequencyMod().getValue());
+        state += relativeFrequency.getValue() * MAX_RELATIVE_FREQUENCY * hz * Config.INV_SAMPLING_RATE;
+        if (state >= 1)
+        {
+            state -= 1;
+            reset();
+        }
+        double phase_mod = phaseAmplifier.getValue()*phaseModulator.getValue();
+
+        double out = Math.sin(2*Math.PI*(state+phase_mod));
         out /= 2;
-        return out*outputAmplitude.getValue()+.5;
+        return out + 0.5;
     }
 }

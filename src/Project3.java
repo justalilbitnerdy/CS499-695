@@ -57,7 +57,7 @@ public class Project3 extends Synth {
       opBox.setBorder(BorderFactory.createTitledBorder("Operator "+i+1));
 
       // setup dials************************************************************
-      Dial relativeFreqDial = new Dial(.1);
+      Dial relativeFreqDial = new Dial(1.0 / PM.MAX_RELATIVE_FREQUENCY);
       opBox.add(relativeFreqDial.getLabelledDial("Relative Frequency"));
       modules.add(relativeFreqDial.getModule());
 
@@ -196,7 +196,7 @@ public class Project3 extends Synth {
     Box outputBox = new Box(BoxLayout.Y_AXIS);
     outputBox.setBorder(BorderFactory.createTitledBorder("Output"));
     outputBox.add(opt);
-    
+
     // Make a final mixer whose inputs are the operators, controlled by their Out dials
     Mixer opMixer = new Mixer(ops, opModules);
     modules.add(opMixer);
