@@ -37,6 +37,7 @@ public class Project3 extends Synth {
       modules.add(outDials[i].getModule());
       opModules[i] = outDials[i].getModule();
       ops[i] = new PM();
+      ops[i].setFrequencyMod(midimod);
       for(int j = 0;j<NUM_OPERATORS;j++){
         Dial signalDial = new Dial(0);
         modules.add(signalDial.getModule());
@@ -80,6 +81,7 @@ public class Project3 extends Synth {
       opModules[i-1] = gainDial.getModule();
 
       // Add Relative Frequency
+      ops[i-1].setRelativeFrequency(relativeFreq.getModule());
 
       // Add an ADSR
       // Add Attack Time, Decay Time, Sustain, Release Time
