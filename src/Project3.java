@@ -58,7 +58,7 @@ public class Project3 extends Synth {
     for(int i = 0;i<NUM_OPERATORS;i++){
       // Make a box
       Box opBox = new Box(BoxLayout.Y_AXIS);
-      opBox.setBorder(BorderFactory.createTitledBorder("Operator "+i+1));
+      opBox.setBorder(BorderFactory.createTitledBorder("Operator "+(i+1)));
 
       // setup dials************************************************************
       Dial relativeFreqDial = new Dial(1.0 / PM.MAX_RELATIVE_FREQUENCY);
@@ -89,10 +89,15 @@ public class Project3 extends Synth {
       Dial gainDial = new Dial(1.0);
       opBox.add(gainDial.getLabelledDial("gain"));
       modules.add(gainDial.getModule());
+
+      Dial phaseDial = new Dial(1.0 / PM.MAX_PHASE_AMPLIFICATION);
+      opBox.add(phaseDial.getLabelledDial("Phase Amplifier"));
+      modules.add(phaseDial.getModule());
       // Done with dials********************************************************
 
       // Add Relative Frequency
       ops[i].setRelativeFrequency(relativeFreqDial.getModule());
+      ops[i].setPhaseAmplifier(phaseDial.getModule());
 
       // Make the operator
       opModules[i] = gainDial.getModule();
