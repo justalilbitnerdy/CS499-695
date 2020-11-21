@@ -35,7 +35,7 @@ public class PM extends Osc
             state -= 1;
             reset();
         }
-        double phase_mod = phaseAmplifier.getValue()*phaseModulator.getValue();
+        double phase_mod = phaseAmplifier.getValue()*(phaseModulator.getValue() - 0.5) + 0.5;
 
         double out = Math.sin(2*Math.PI*(state+phase_mod));
         out /= 2;
