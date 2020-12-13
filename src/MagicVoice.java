@@ -68,14 +68,13 @@ public class MagicVoice extends JFrame{
 
   /***
    * Applies any given filter
-   * @param bytes
    */
   private void filterAudio(int numBytes,byte[] audioArray){
     //get the double version of the output
     double[] sample = decodeSample(numBytes,audioArray);
     switch(activeFilters){
       case PITCH_MASK:
-        Filters.PitchScale(1,sample);
+        Filters.PitchScale(2,sample);
         //do the things*********************************************************
         break;
     }
@@ -238,7 +237,7 @@ public class MagicVoice extends JFrame{
 
   //This thread captures audio from the Microphone, and plays it back
   class AudioThread extends Thread {
-    byte buffer[] = new byte[100];
+    byte buffer[] = new byte[128];
     public void run(){
       try{
         while(isActive){
