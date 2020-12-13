@@ -37,7 +37,14 @@ public class MagicVoice extends JFrame{
   private double[] decodeSample(int numBytes,byte[] byteSample){
     double[] doubleSample = new double[numBytes/2];
     for(int i=0,j=0;i<numBytes-1;i+=2,j++){
-      int sample = (byteSample[i]& 255) | (byteSample[i+1]);
+      long longSample;
+      if (BIG_ENDIAN) {
+          longSample = (((byteSample[i] & 0xffL) << 8) | ((byteSample[i+1] & 0xffL)));
+      } else {
+          longSample = ((byteSample[i] & 0xffL) | ((byteSample[i + 1] & 0xffL) << 8));
+      }
+      int bitsToExtend = Long.SIZE - SAMPLE_SIZE_IN_BITS;
+      float sample = (longSample << bitsToExtend) >> bitsToExtend;
       doubleSample[j] = sample/32768.0;
     }
     return doubleSample;
@@ -45,9 +52,21 @@ public class MagicVoice extends JFrame{
 
   private byte[] encodeSample(double[] doubleSample){
     byte[] byteSample = new byte[doubleSample.length*2];
+
+    for(int i=0,j=0;i<doubleSample.length;i++,j+=2){
+      long sample = (long) (doubleSample[i]*32768);
+      if (BIG_ENDIAN) {
+        byteSample[j]   = (byte) ((sample >>> 8) & 0xffL);
+        byteSample[j+1] = (byte) ( sample        & 0xffL);
+      } else {
+        byteSample[j]   = (byte) ( sample        & 0xffL);
+        byteSample[j+1] = (byte) ((sample >>> 8) & 0xffL);
+      }
+    }
     return byteSample;
   }
-    /***
+
+  /***
    * Applies any given filter
    * @param bytes
    */
@@ -58,12 +77,18 @@ public class MagicVoice extends JFrame{
       case PITCH_MASK:
         //do the things*********************************************************
         break;
-
     }
+
     byte[] newByteSample = encodeSample(sample);
+    for(int i=0;i<audioArray.length;i++){
+      System.out.print(audioArray[i] + " = ");
+      System.out.print(newByteSample[i]);
+      System.out.println();
+    }
     for(int i = 0; i<newByteSample.length;i++){
       audioArray[i] = newByteSample[i];
     }
+
   }
 
   @SuppressWarnings("unchecked")
