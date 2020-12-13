@@ -16,7 +16,7 @@ public class MagicVoice extends JFrame{
   //Sample Info
   private float SAMPLE_RATE = 44100; //8000,11025,16000,22050,44100hz
   private int SAMPLE_SIZE_IN_BITS = 16; //8,16
-  private int NUMBER_OF_CHANNELS = 2; //1,2
+  private int NUMBER_OF_CHANNELS = 1; //1,2
   private boolean SIGNED = true; //true,false
   private boolean BIG_ENDIAN = false; //true,false
   private AudioFormat SAMPLE_FORMAT = new AudioFormat(SAMPLE_RATE,
@@ -32,18 +32,37 @@ public class MagicVoice extends JFrame{
 
   // this bitmask will allow us to choose what filters we are using
   final private byte                 PITCH_MASK = 1;
-  private byte                 activeFilters = PITCH_MASK;
+  private byte                       activeFilters = PITCH_MASK;
 
+  private double[] decodeSample(int numBytes,byte[] byteSample){
+    double[] doubleSample = new double[numBytes/2];
+    for(int i=0,j=0;i<numBytes-1;i+=2,j++){
+      int sample = (byteSample[i]& 255) | (byteSample[i+1]);
+      doubleSample[j] = sample/32768.0;
+    }
+    return doubleSample;
+  }
+
+  private byte[] encodeSample(double[] doubleSample){
+    byte[] byteSample = new byte[doubleSample.length*2];
+    return byteSample;
+  }
     /***
    * Applies any given filter
    * @param bytes
    */
-  private void filterAudio(int bytes,byte[] audioArray){
+  private void filterAudio(int numBytes,byte[] audioArray){
+    //get the double version of the output
+    double[] sample = decodeSample(numBytes,audioArray);
     switch(activeFilters){
       case PITCH_MASK:
         //do the things*********************************************************
         break;
 
+    }
+    byte[] newByteSample = encodeSample(sample);
+    for(int i = 0; i<newByteSample.length;i++){
+      audioArray[i] = newByteSample[i];
     }
   }
 
