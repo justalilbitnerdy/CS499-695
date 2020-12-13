@@ -1,7 +1,4 @@
 public class Filters{
-  public static void PitchShift(float pitch,
-                                byte[] audioPacket,
-                                int numBytes) {
-
+  public static void PitchScale(float pitch, double[] audioPacket) {
   }
 }

@@ -75,20 +75,15 @@ public class MagicVoice extends JFrame{
     double[] sample = decodeSample(numBytes,audioArray);
     switch(activeFilters){
       case PITCH_MASK:
+        Filters.PitchScale(1,sample);
         //do the things*********************************************************
         break;
     }
 
     byte[] newByteSample = encodeSample(sample);
-    for(int i=0;i<audioArray.length;i++){
-      System.out.print(audioArray[i] + " = ");
-      System.out.print(newByteSample[i]);
-      System.out.println();
-    }
     for(int i = 0; i<newByteSample.length;i++){
       audioArray[i] = newByteSample[i];
     }
-
   }
 
   @SuppressWarnings("unchecked")
